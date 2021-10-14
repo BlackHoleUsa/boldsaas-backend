@@ -22,24 +22,4 @@ module.exports = function (app) {
   app.post("/api/auth/forget-password", controller.forgotPassword);
 
   app.post("/api/auth/reset-password", controller.resetPassword);
-
-  //   app.get('/api/logout',auth,function(req,res){
-  //     let token = req.jwtToken.token
-  //     let secret = req.jwtToken.secret
-  //     if (typeof token == 'string' && typeof secret == 'string') {
-  //         exporter.setHashKeyValuesIntoRedis('expired_token', [token, secret])
-  //         .then(() => {
-  //             res.status(200).json({
-  //                 msg: 'logged out'
-  //             })
-  //         })
-  //         .catch((redisErr) => {
-  //         })
-  //     }
-  //     else {
-  //         res.status(404).json({
-  //             msg: 'invalid token'
-  //         })
-  //     }
-  // })
 };

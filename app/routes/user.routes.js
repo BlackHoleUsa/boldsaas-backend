@@ -41,32 +41,14 @@ module.exports = function (app) {
     adminController.resetPassword
   );
 
-  app.post("/logout", async (req, res) => {
-    try {
-      const xaccesheader = "x-access-token";
-      let randomNumberToAppend = toString(Math.floor(Math.random() * 1000 + 1));
-      let randomIndex = Math.floor(Math.random() * 10 + 1);
-      let hashedRandomNumberToAppend = await bcrypt.hash(
-        randomNumberToAppend,
-        10
-      );
-      // now just concat the hashed random number to the end of the token
-      req.headers[xaccesheader] =
-        req.headers[xaccesheader] + hashedRandomNumberToAppend;
-      return res.status(200).json("logout");
-    } catch (err) {
-      return res.status(500).json(err.message);
-    }
-    res.send(200);
-  });
-
+  app.get("/api/latest", userController.latestCoinPrice);
   app.post(
-    "/api/coin-price-update",
+    "/api/admin/coin-price",
     [authJwt.isAdmin],
     adminController.priceUpdate
   );
 
-  app.get("/api/coin-price-histroy", userController.coinPriceHistroy);
+  // app.get("/api/coin-price-histroy", userController.coinPriceHistroy);
 
   app.get("/api/stripe-page", userController.stripePage);
 

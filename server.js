@@ -8,7 +8,7 @@ var xss = require("xss-clean");
 const app = express();
 
 var corsOptions = {
-  origin: "http://localhost:8081",
+  origin: "http://localhost:3000",
 };
 
 app.use(cors(corsOptions));
@@ -21,14 +21,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 
 const db = require("./app/models");
-const Role = db.role;
-//`mongodb+srv://node-db:node-db@cluster0.xa2lf.mongodb.net/boldsaas?retryWrites=true&w=majority`
+
 db.mongoose
   .connect(
     `mongodb+srv://node-db:node-db@cluster0.xa2lf.mongodb.net/boldsaas?retryWrites=true&w=majority`,
     {
       useNewUrlParser: true,
-      //useUnifiedTopology: true,
+      useUnifiedTopology: true,
     }
   )
   .then(() => {
@@ -42,10 +41,7 @@ db.mongoose
 require("./app/routes/auth.routes")(app);
 require("./app/routes/user.routes")(app);
 
-const PORT = process.env.PORT || 4007;
+const PORT = process.env.PORT || 4002;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
-
-//"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNjZjYzAwNzViNjg3MDAyM...
-//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNjZjYzAwNzViNjg3MDAyM...

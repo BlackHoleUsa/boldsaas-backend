@@ -147,3 +147,12 @@ exports.payPalPaymentSuccees = async (req, res) => {
     }
   );
 };
+
+exports.latestCoinPrice = async (req, res) => {
+  const price = await coin.find().sort({ _id: -1 }).limit(1);
+
+  if (!price) {
+    res.status(404).json({ message: "Price not get " });
+  }
+  res.status(200).json({ messege: price });
+};

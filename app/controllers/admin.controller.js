@@ -14,6 +14,8 @@ exports.getAllUsers = async (req, res) => {
 };
 
 exports.blockUser = async (req, res) => {
+  console.log("Inside =>", req.body.email);
+
   const block = await user
     .updateOne({ email: req.body.email }, { $set: { is_Blocked: "true" } })
     .lean()
@@ -59,8 +61,8 @@ exports.resetPassword = async (req, res) => {
 };
 
 exports.priceUpdate = async (req, res) => {
-  const value = await coin.updateOne({
-    coin_value: req.body.value,
+  const value = await coin.create({
+    coin_price: req.body.value,
   });
 
   if (!value) {

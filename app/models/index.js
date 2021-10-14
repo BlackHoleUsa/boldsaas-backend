@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
 
 const db = {};
@@ -7,7 +7,7 @@ db.mongoose = mongoose;
 
 db.user = require("./user.model");
 
-//db.coin =require("./coin.model");
+db.coin = require("./coin.model");
 
 // db.ROLES = ["user", "admin"];
 

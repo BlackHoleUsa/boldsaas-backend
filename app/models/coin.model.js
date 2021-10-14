@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const Coin = mongoose.model(
   "Coin",
   new mongoose.Schema({
-    coin_value: {
+    coin_price: {
       type: Number,
       required: true,
     },
