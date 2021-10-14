@@ -3,6 +3,9 @@ const controller = require("../controllers/user.controller");
 const adminController = require("../controllers/admin.controller");
 const userController = require("../controllers/user.controller");
 const paypal = require("paypal-rest-sdk");
+const validate = require("../validation/auth.validation");
+const middlewares = require("../middlewares/validate");
+
 require("dotenv").config();
 
 paypal.configure({
@@ -45,6 +48,7 @@ module.exports = function (app) {
   app.post(
     "/api/admin/coin-price-update",
     [authJwt.isAdmin],
+    middlewares(validate.value),
     adminController.priceUpdate
   );
 

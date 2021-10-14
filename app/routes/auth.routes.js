@@ -1,6 +1,7 @@
 const { verifySignUp } = require("../middlewares");
 const controller = require("../controllers/auth.controller");
 const validate = require("../validation/auth.validation");
+const middlewares = require("../middlewares/validate");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {
@@ -17,7 +18,7 @@ module.exports = function (app) {
     controller.signup
   );
 
-  app.post("/api/auth/signin", controller.signin);
+  app.post("/api/auth/signin", middlewares(validate.email), controller.signin);
 
   app.post("/api/auth/forget-password", controller.forgotPassword);
 

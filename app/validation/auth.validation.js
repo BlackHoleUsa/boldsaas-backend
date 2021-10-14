@@ -24,9 +24,21 @@ const is_toc = {
   }),
 };
 
-module.exports = {
-  forgotPassword,
-  resetPassword,
-  verifyEmail,
-  is_toc,
+const schemas = {
+  email: Joi.object().keys({
+    email: Joi.string().required(),
+    password: Joi.required(),
+  }),
+  value: Joi.object().keys({
+    value: Joi.number().required(),
+  }),
+  // define all the other schemas below
 };
+module.exports = schemas;
+
+// module.exports = {
+//   forgotPassword,
+//   resetPassword,
+//   verifyEmail,
+//   is_toc,
+// };
