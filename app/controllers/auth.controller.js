@@ -26,7 +26,7 @@ exports.signup = async (req, res) => {
 
 exports.signin = async (req, res) => {
   const user2 = await User.findOne({
-    username: req.body.username,
+    email: req.body.email,
   }).exec(async (err, user) => {
     if (err) {
       res.status(500).json({ message: err });
@@ -51,7 +51,7 @@ exports.signin = async (req, res) => {
     });
 
     const find = await User.updateOne(
-      { username: req.body.username },
+      { email: req.body.email },
       { $set: { token: token } }
     )
       .lean()

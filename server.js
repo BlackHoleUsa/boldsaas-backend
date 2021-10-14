@@ -41,7 +41,8 @@ db.mongoose
 require("./app/routes/auth.routes")(app);
 require("./app/routes/user.routes")(app);
 
-const PORT = process.env.PORT || 4002;
+const PORT = process.env.PORT || 4012;
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });

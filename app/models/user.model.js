@@ -5,14 +5,12 @@ const User = mongoose.model(
   new mongoose.Schema({
     username: {
       type: String,
-      unique: true,
       required: true,
     },
     email: {
       type: String,
       unique: true,
       lowercase: true,
-      trim: true,
       required: true,
     },
 

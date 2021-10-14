@@ -43,7 +43,7 @@ module.exports = function (app) {
 
   app.get("/api/latest", userController.latestCoinPrice);
   app.post(
-    "/api/admin/coin-price",
+    "/api/admin/coin-price-update",
     [authJwt.isAdmin],
     adminController.priceUpdate
   );
