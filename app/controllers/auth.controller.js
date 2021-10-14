@@ -7,7 +7,7 @@ const User = require("../models/user.model");
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 
-exports.signup = (req, res) => {
+exports.signup = async (req, res) => {
   const user = new User({
     username: req.body.username,
     email: req.body.email,
@@ -15,12 +15,12 @@ exports.signup = (req, res) => {
     is_Admin: req.body.is_Admin,
   });
 
-  user.save((err, user) => {
+  const save = await user.save((err, user) => {
     if (err) {
       res.status(500).json({ message: err });
       return;
     }
-    res.json("User added Successfully");
+    return res.status(404).json({ message: "User added Successfully." });
   });
 };
 
@@ -50,8 +50,6 @@ exports.signin = async (req, res) => {
       expiresIn: 86400, // 24 hours
     });
 
-    console.log("Updated");
-
     const find = await User.updateOne(
       { username: req.body.username },
       { $set: { token: token } }
@@ -62,6 +60,7 @@ exports.signin = async (req, res) => {
           id: user._id,
           username: user.username,
           email: user.email,
+          is_Admin: user.is_Admin,
           accessToken: token,
         });
       })

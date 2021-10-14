@@ -31,15 +31,12 @@ isAdmin = async (req, res, next) => {
       return res.status(401).json({ message: "Unauthorized!" });
     }
     req.userId = decoded.id;
-    console.log("decoded.id", decoded.id);
 
     const find = await User.findOne({
       _id: decoded.id,
       is_Admin: true,
       token: token,
     }).lean();
-
-    // console.log(find);
 
     if (!find) {
       res.status(403).json({ message: "Require Admin Role!" });
@@ -60,7 +57,6 @@ isUser = async (req, res, next) => {
       return res.status(401).json({ message: "Unauthorized!" });
     }
     req.userId = decoded.id;
-    console.log("decoded.id", decoded.id);
 
     const find = await User.findOne({
       _id: decoded.id,
@@ -68,8 +64,6 @@ isUser = async (req, res, next) => {
       is_Blocked: false,
       token: token,
     }).lean();
-
-    // console.log(find);
 
     if (!find) {
       res.status(403).json({ message: "User is not Found!" });

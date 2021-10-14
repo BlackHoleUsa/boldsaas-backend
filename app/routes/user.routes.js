@@ -44,7 +44,6 @@ module.exports = function (app) {
   app.post("/logout", async (req, res) => {
     try {
       const xaccesheader = "x-access-token";
-      console.log(req.headers[xaccesheader]);
       let randomNumberToAppend = toString(Math.floor(Math.random() * 1000 + 1));
       let randomIndex = Math.floor(Math.random() * 10 + 1);
       let hashedRandomNumberToAppend = await bcrypt.hash(
@@ -54,7 +53,6 @@ module.exports = function (app) {
       // now just concat the hashed random number to the end of the token
       req.headers[xaccesheader] =
         req.headers[xaccesheader] + hashedRandomNumberToAppend;
-      console.log("req.header=>", req.headers[xaccesheader]);
       return res.status(200).json("logout");
     } catch (err) {
       return res.status(500).json(err.message);

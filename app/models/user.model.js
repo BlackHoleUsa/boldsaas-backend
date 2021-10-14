@@ -3,7 +3,11 @@ const mongoose = require("mongoose");
 const User = mongoose.model(
   "User",
   new mongoose.Schema({
-    username: String,
+    username: {
+      type: String,
+      unique: true,
+      required: true,
+    },
     email: {
       type: String,
       unique: true,
@@ -27,10 +31,7 @@ const User = mongoose.model(
       type: Boolean,
       default: false,
     },
-    token: {
-      type: String,
-      unique: true,
-    },
+    token: String,
     Created_date: {
       type: Date,
       default: Date.now,

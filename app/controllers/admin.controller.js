@@ -8,20 +8,14 @@ var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 
 exports.getAllUsers = async (req, res) => {
-  //console.log(req);
   const admin = await user.find({ is_Admin: false, is_Blocked: false }).lean();
 
   res.send(admin);
 };
 
 exports.blockUser = async (req, res) => {
-  console.log("Inside =>", req.body.username);
-
   const block = await user
-    .updateOne(
-      { username: req.body.username },
-      { $set: { is_Blocked: "true" } }
-    )
+    .updateOne({ email: req.body.email }, { $set: { is_Blocked: "true" } })
     .lean()
     .exec((err, user) => {
       if (err) {
@@ -65,8 +59,8 @@ exports.resetPassword = async (req, res) => {
 };
 
 exports.priceUpdate = async (req, res) => {
-  const value = await coin.create({
-    coin: req.body.value,
+  const value = await coin.updateOne({
+    coin_value: req.body.value,
   });
 
   if (!value) {

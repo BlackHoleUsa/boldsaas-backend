@@ -45,7 +45,6 @@ exports.stripePayment = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized!" });
     }
     req.userId = decoded.id;
-    console.log("decoded.id", decoded.id);
 
     find = await User.findOne({
       _id: decoded.id,
@@ -67,7 +66,6 @@ exports.stripePayment = async (req, res) => {
       });
     })
     .then((charges) => {
-      console.log(charges);
       find.update({ purchase: true });
 
       res.send("Succes");
@@ -110,7 +108,6 @@ exports.payPal = async (req, res) => {
 
   paypal.payment.create(create_payment_json, function (error, payment) {
     if (error) {
-      console.log(error);
       throw error;
     } else {
       for (let i = 0; i < payment.links.length; i++) {
@@ -143,10 +140,8 @@ exports.payPalPaymentSuccees = async (req, res) => {
     execute_payment_json,
     function (error, payment) {
       if (error) {
-        console.log(error.response);
         throw error;
       } else {
-        console.log(JSON.stringify(payment));
         res.send("Success");
       }
     }
