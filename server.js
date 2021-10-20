@@ -4,7 +4,7 @@ const cors = require("cors");
 const dbConfig = require("./app/config/db.config");
 const helmet = require("helmet");
 var xss = require("xss-clean");
-
+const path = require("path");
 const app = express();
 
 var corsOptions = {
@@ -18,6 +18,7 @@ app.use(xss());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
 const db = require("./app/models");

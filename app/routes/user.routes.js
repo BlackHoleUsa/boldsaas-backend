@@ -47,16 +47,16 @@ module.exports = function (app) {
   app.get("/api/latest", userController.latestCoinPrice);
   app.post(
     "/api/admin/coin-price-update",
-    [authJwt.isAdmin],
+    [authJwt.isAdmin, authJwt.verifyToken],
     middlewares(validate.value),
     adminController.priceUpdate
   );
 
   // app.get("/api/coin-price-histroy", userController.coinPriceHistroy);
 
-  app.get("/api/stripe-page", userController.stripePage);
+  app.get("/api/", userController.stripePage);
 
-  app.post("/api/payment", userController.stripePayment);
+  app.post("/payment", userController.stripePayment);
 
   app.get("/go", (req, res) => res.render("paypal"));
 

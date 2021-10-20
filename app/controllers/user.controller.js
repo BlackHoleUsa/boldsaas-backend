@@ -9,6 +9,7 @@ require("dotenv").config();
 const stripe = require("stripe")(process.env.Private_Api_Key);
 
 const paypal = require("paypal-rest-sdk");
+const { blockchain } = require("../contractInfo/Sample");
 
 paypal.configure({
   mode: "sandbox", //sandbox or live
@@ -26,19 +27,24 @@ exports.coinPriceHistroy = async (req, res) => {
   res.status(200).json({ messege: value });
 };
 
-exports.stripePage = async (req, res) => {
-  res.render("home", {
+exports.stripePage = (req, res) => {
+  //console.log(process.env.Public_Api_Key);
+
+  res.render("Home", {
     key: process.env.Public_Api_Key,
   });
 };
 
 exports.stripePayment = async (req, res) => {
   let token = req.headers["x-access-token"];
-  let find;
 
   if (!token) {
     return res.status(403).json({ message: "No token provided!" });
   }
+
+  let find;
+  let totalPrice = req.body.price;
+  let price = await coin.find().sort({ _id: -1 }).limit(1);
 
   jwt.verify(token, config.secret, async (err, decoded) => {
     if (err) {
@@ -54,19 +60,22 @@ exports.stripePayment = async (req, res) => {
   });
   stripe.customers
     .create({
-      email: req.body.email,
-      source: req.body.token,
+      email: req.body.stripeEmail,
+      source: req.body.stripeToken,
     })
     .then((customers) => {
       return stripe.charges.create({
-        amount: 20,
-        description: "Thanks for buying your subscription",
+        amount: price,
+        description: "Thanks for buying shares",
         currency: "USD",
         customer: customer.id,
       });
     })
-    .then((charges) => {
+    .then(async (charge) => {
       find.update({ purchase: true });
+      userEmail = await find.find({ email: find.email });
+      console.log(userEmail);
+      blockchain(totalPrice, userEmail, price);
 
       res.send("Succes");
     })
@@ -90,7 +99,7 @@ exports.payPal = async (req, res) => {
         item_list: {
           items: [
             {
-              name: "Red Sox Hat",
+              name: "Shares",
               price: "25.00", // req.body.price,
               currency: "USD",
               quantity: 1, // req.body.quantity,
@@ -99,7 +108,7 @@ exports.payPal = async (req, res) => {
         },
         amount: {
           currency: "USD",
-          total: "25.00", // to be decided
+          total: "25.00", // req.body.total
         },
         description: "Thank You for buying the tokens",
       },
@@ -142,6 +151,10 @@ exports.payPalPaymentSuccees = async (req, res) => {
       if (error) {
         throw error;
       } else {
+        // userEmail = await find.find({ email: find.email });
+        // console.log(userEmail);
+        // blockchain(totalPrice, userEmail, price);
+
         res.send("Success");
       }
     }
