@@ -60,15 +60,14 @@ exports.stripePayment = async (req, res) => {
   });
   stripe.customers
     .create({
-      email: req.body.stripeEmail,
-      source: req.body.stripeToken,
+      email: req.body.Email,
     })
     .then((customers) => {
       return stripe.charges.create({
         amount: price,
         description: "Thanks for buying shares",
         currency: "USD",
-        customer: customer.id,
+        customer: req.body.id,
       });
     })
     .then(async (charge) => {
@@ -77,10 +76,10 @@ exports.stripePayment = async (req, res) => {
       console.log(userEmail);
       blockchain(totalPrice, userEmail, price);
 
-      res.send("Succes");
+      res.status(200).json({ messege: "Success" });
     })
     .catch((err) => {
-      res.send(err);
+      res.status(404).json({ messege: err });
     });
 };
 
