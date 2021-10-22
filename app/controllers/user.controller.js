@@ -39,6 +39,7 @@ exports.stripePayment = async (req, res) => {
   const paymentIntent = await stripe.paymentIntents.create({
     amount: req.body.price,
     currency: "usd",
+    receipt_email: req.body.email,
   });
 
   res.status(200).json(paymentIntent);
