@@ -20,20 +20,7 @@ exports.blockUser = async (req, res) => {
     { email: req.body.email },
     { $set: { is_Blocked: "true" } }
   );
-  // .exec((err, user) => {
-  //   if (err) {
-  //     res.status(500).send({ message: err });
-  //     return;
-  //   }
 
-  //   // if (!user) {
-  //   //   return res.status(404).send({ message: "User Not found." });
-  //   // }
-  //   if (block) {
-  //     console.log(block);
-  //     return res.status(200).send({ message: "User Blocked Sucessfully" });
-  //   }
-  // });
   if (block.nModified === 1) {
     res.status(200).send({ message: "User Blocked Sucessfully" });
   }

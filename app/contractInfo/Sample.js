@@ -15,7 +15,7 @@ web3.eth.defaultAccount = "0xa08a9bA3EaC7EC46FB2e6072A966219cD98D6D69";
 // var user = "usman@test.com";
 // var price = 100; // 2 decimal places (1 x 1e^2)
 
-const blockchain = (amount, user, price) => {
+exports.blockchain = async (amount, user, price) => {
   amount = amount * 100000000;
   price = price * 100;
 
@@ -54,6 +54,6 @@ const blockchain = (amount, user, price) => {
   });
 };
 
-module.exports = blockchain;
+// module.exports = blockchain;
 
 // 31 days = "0 */744 * * *""

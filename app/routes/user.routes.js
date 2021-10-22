@@ -55,8 +55,6 @@ module.exports = function (app) {
 
   // app.get("/api/coin-price-histroy", userController.coinPriceHistroy);
 
-  app.get("/api/", userController.stripePage);
-
   app.post("/payment", userController.stripePayment);
 
   app.get("/go", (req, res) => res.render("paypal"));
@@ -70,4 +68,6 @@ module.exports = function (app) {
   });
 
   app.get("/cancel", (req, res) => res.send("Cancelled"));
+
+  app.post("/strip-payment-success", userController.stripeBlockChain);
 };
