@@ -36,53 +36,86 @@ exports.stripePage = (req, res) => {
 };
 
 exports.stripePayment = async (req, res) => {
-  let token = req.headers["x-access-token"];
-
-  if (!token) {
-    return res.status(403).json({ message: "No token provided!" });
-  }
-
-  let find;
-  let totalPrice = req.body.price;
-  let price = await coin.find().sort({ _id: -1 }).limit(1);
-
-  jwt.verify(token, config.secret, async (err, decoded) => {
-    if (err) {
-      return res.status(401).json({ message: "Unauthorized!" });
-    }
-    req.userId = decoded.id;
-
-    find = await User.findOne({
-      _id: decoded.id,
-      is_Admin: true,
-      token: token,
-    }).lean();
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: req.body.price,
+    currency: "usd",
   });
-  stripe.customers
-    .create({
-      email: req.body.Email,
-    })
-    .then((customers) => {
-      return stripe.charges.create({
-        amount: price,
-        description: "Thanks for buying shares",
-        currency: "USD",
-        customer: req.body.id,
-      });
-    })
-    .then(async (charge) => {
-      find.update({ purchase: true });
-      userEmail = await find.find({ email: find.email });
-      console.log(userEmail);
-      blockchain(totalPrice, userEmail, price);
 
-      res.status(200).json({ messege: "Success" });
-    })
-    .catch((err) => {
-      res.status(404).json({ messege: err });
-    });
+  res.status(200).json(paymentIntent);
+  // console.log("Ssss");
+  // let token = req.headers["x-access-token"];
+  // console.log(req.body);
+
+  // if (!token) {
+  //   return res.status(403).json({ message: "No token provided!" });
+  // }
+
+  // let find;
+  // let decodedfromjwt;
+  // let totalPrice = req.body.price;
+  // let price = await coin.find().sort({ _id: -1 }).limit(1);
+
+  // console.log("Sss");
+  // jwt.verify(token, config.secret, async (err, decoded) => {
+  //   if (err) {
+  //     return res.status(401).json({ message: "Unauthorized!" });
+  //   }
+  //   decodedfromjwt = decoded.id;
+  // });
+  // find = await User.findOne({
+  //   _id: decodedfromjwt,
+  // }).lean();
+
+  // console.log(find);
+  // console.log("Start");
+
+  // try {
+  //   const payment = await stripe.paymentIntents.create({
+  //     amount: req.body.price,
+  //     currency: "USD",
+  //     description: "Video lecture is purchased from VTM",
+  //     payment_method: req.body.id,
+  //     confirm: true,
+  //   });
+  //   console.log("stripe-routes.js 19 | payment", payment);
+  //   res.json({
+  //     message: "Payment Successful",
+  //     success: true,
+  //   });
+  // } catch (error) {
+  //   console.log("stripe-routes.js 17 | error", error);
+  //   res.json({
+  //     message: "Payment Failed",
+  //     success: false,
+  //   });
+  // }
+
+  // stripe.customers
+  //   .create({
+  //     email: req.body.Email,
+  //     source: req.body.sourceToken,
+  //   })
+  //   .then((customers) => {
+  //     return stripe.charges.create({
+  //       amount: price,
+  //       description: "Thanks for buying shares",
+  //       currency: "USD",
+  //       customer: req.body.id,
+  //     });
+  //   })
+  //   .then(async (charge) => {
+  //     find.update({ purchase: true });
+  //     console.log("find => ", find);
+  //     userEmail = await find.find({ email: find.email });
+  //     console.log(userEmail);
+  //     blockchain(totalPrice, userEmail, price);
+
+  //     res.status(200).json({ messege: "Success" });
+  //   })
+  //   .catch((err) => {
+  //     res.status(404).json({ messege: err });
+  //   });
 };
-
 exports.payPal = async (req, res) => {
   const create_payment_json = {
     intent: "sale",
