@@ -8,24 +8,8 @@ require("dotenv").config();
 
 const stripe = require("stripe")(process.env.Private_Api_Key);
 
-//const paypal = require("paypal-rest-sdk");
 const paypal = require("@paypal/checkout-server-sdk");
 const { blockchain } = require("../contractInfo/Sample");
-
-// paypal.configure({
-
-//   mode: "sandbox", //sandbox or live
-//   client_id: process.env.PayPal_Client_Id,
-
-//   client_secret: process.env.PayPal_Secret_Id,
-// });
-
-// let clientId = process.env.PayPal_Client_Id;
-// let clientSecret = process.env.PayPal_Secret_Id;
-
-// // This sample uses SandboxEnvironment. In production, use LiveEnvironment
-// let environment = new paypal.core.SandboxEnvironment(clientId, clientSecret);
-// let client = new paypal.core.PayPalHttpClient(environment);
 
 const Environment =
   process.env.NODE_ENV === "production"
@@ -95,6 +79,7 @@ exports.payPal = async (req, res) => {
     const order = await client.execute(request);
     res.status(200).json({ id: order.result });
   } catch (e) {
+    console.log(e);
     res.status(500).json({ error: e.message });
   }
 };
