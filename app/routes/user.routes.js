@@ -57,7 +57,11 @@ module.exports = function (app) {
 
   app.post("/payment", userController.stripePayment);
 
-  app.get("/go", (req, res) => res.render("paypal"));
+  app.get("/go", (req, res) =>
+    res.render("index", {
+      paypalClientId: process.env.PayPal_Client_Id,
+    })
+  );
 
   app.post("/api/paypal", userController.payPal);
 

@@ -6,7 +6,8 @@ const helmet = require("helmet");
 var xss = require("xss-clean");
 const path = require("path");
 const app = express();
-
+app.set("view engine", "ejs");
+app.use(express.static("public"));
 var corsOptions = {
   origin: "http://localhost:3000",
 };

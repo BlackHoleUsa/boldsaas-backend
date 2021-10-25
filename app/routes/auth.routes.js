@@ -20,7 +20,11 @@ module.exports = function (app) {
 
   app.post("/api/auth/signin", middlewares(validate.email), controller.signin);
 
-  app.post("/api/auth/forget-password", controller.forgotPassword);
+  app.post(
+    "/api/auth/forget-password",
+    middlewares(validate.emails),
+    controller.forgotPassword
+  );
 
-  app.post("/api/auth/reset-password", controller.resetPassword);
+  app.patch("/api/auth/reset-password/:token", controller.resetPassword);
 };

@@ -3,6 +3,7 @@ const email = require("../utils/sendEmail");
 const getuser = require("../utils/users");
 const reset = require("../utils/resetpassword");
 const User = require("../models/user.model");
+const crypto = require("crypto");
 
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
@@ -70,35 +71,62 @@ exports.signin = async (req, res) => {
   });
 };
 
-exports.forgotPassword = (req, res) => {
-  let dbUser = getuser.getUserByEmail(req.body.email);
+exports.forgotPassword = async (req, res) => {
+  let dbUser = await getuser.getUserByEmail(req.body.email);
 
   if (!dbUser) {
     return res.status(404).json({
       status: 404,
-      message: "User not found",
+      message: "There is no user found with this email address",
     });
   }
+  const resetToken = dbUser.createPasswordResetToken();
+  await dbUser.save({ validateBeforeSave: false });
 
-  email.sendEmail(req.body.email, "Reset Password", "link");
+  const resetURL = `http://localhost:3000/forgotpassword?token=${resetToken}`;
 
-  res.status(200).json({
-    code: 200,
-    message: "Password reset email has been successfully sent to your email",
-  });
+  try {
+    await email.sendEmail(
+      req.body.email,
+      "Reset Password ONLY VALID FOR 10 MINS",
+      resetURL
+    );
+
+    res.status(200).json({
+      code: 200,
+      message: "Password reset email has been successfully sent to your email",
+    });
+  } catch (err) {
+    res.status(500).json({ error: err });
+  }
 };
 
-exports.resetPassword = (req, res) => {
-  let dbUser = getuser.getUserByEmail(req.body.email);
+exports.resetPassword = async (req, res) => {
+  const hashedToken = crypto
+    .createHash("sha256")
+    .update(req.params.token)
+    .digest("hex");
 
-  if (!dbUser) {
+  console.log(hashedToken);
+
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
     return res.status(404).json({
       status: 404,
       message: "User not found",
     });
   }
 
-  reset.resetPassword(req.body.email, req.body.password);
+  user.password = bcrypt.hashSync(req.body.password, 8);
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+
+  await user.save();
+
   res.status(200).json({
     status: 200,
     message: "Password changed successfully!",

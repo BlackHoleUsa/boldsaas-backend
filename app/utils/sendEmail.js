@@ -14,8 +14,8 @@ exports.sendEmail = async (email, subject, text) => {
       from: "abubakarblackhole5@gmail.com",
       to: email,
       subject: subject,
-      text: text,
-      html: "<b>Hello world?</b>",
+      // text: 'Reset Password ONLY VALID FOR 10 MINS',
+      html: text,
     };
 
     transporter.sendMail(mailOptions, function (err, info) {

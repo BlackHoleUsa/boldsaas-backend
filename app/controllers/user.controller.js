@@ -8,15 +8,32 @@ require("dotenv").config();
 
 const stripe = require("stripe")(process.env.Private_Api_Key);
 
-const paypal = require("paypal-rest-sdk");
+//const paypal = require("paypal-rest-sdk");
+const paypal = require("@paypal/checkout-server-sdk");
 const { blockchain } = require("../contractInfo/Sample");
 
-paypal.configure({
-  mode: "sandbox", //sandbox or live
-  client_id: process.env.PayPal_Client_Id,
+// paypal.configure({
 
-  client_secret: process.env.PayPal_Secret_Id,
-});
+//   mode: "sandbox", //sandbox or live
+//   client_id: process.env.PayPal_Client_Id,
+
+//   client_secret: process.env.PayPal_Secret_Id,
+// });
+
+// let clientId = process.env.PayPal_Client_Id;
+// let clientSecret = process.env.PayPal_Secret_Id;
+
+// // This sample uses SandboxEnvironment. In production, use LiveEnvironment
+// let environment = new paypal.core.SandboxEnvironment(clientId, clientSecret);
+// let client = new paypal.core.PayPalHttpClient(environment);
+
+const Environment =
+  process.env.NODE_ENV === "production"
+    ? paypal.core.LiveEnvironment
+    : paypal.core.SandboxEnvironment;
+const client = new paypal.core.PayPalHttpClient(
+  new Environment(process.env.PayPal_Client_Id, process.env.PayPal_Secret_Id)
+);
 
 exports.coinPriceHistroy = async (req, res) => {
   const value = await coin.find({}).lean();
@@ -61,47 +78,25 @@ exports.stripeBlockChain = async (req, res) => {
 };
 
 exports.payPal = async (req, res) => {
-  const create_payment_json = {
-    intent: "sale",
-    payer: {
-      payment_method: "paypal",
-    },
-    redirect_urls: {
-      return_url: "http://localhost:8080/api/paypal-payment-success",
-      cancel_url: "http://localhost:8080/cancel",
-    },
-    transactions: [
+  let request = new paypal.orders.OrdersCreateRequest();
+  request.requestBody({
+    intent: "CAPTURE",
+    purchase_units: [
       {
-        item_list: {
-          items: [
-            {
-              name: "Shares",
-              price: "25.00", // req.body.price,
-              currency: "USD",
-              quantity: 1, // req.body.quantity,
-            },
-          ],
-        },
         amount: {
-          currency: "USD",
-          total: "25.00", // req.body.total
+          currency_code: "USD",
+          value: req.body.totalPrice,
         },
-        description: "Thank You for buying the tokens",
       },
     ],
-  };
-
-  paypal.payment.create(create_payment_json, function (error, payment) {
-    if (error) {
-      throw error;
-    } else {
-      for (let i = 0; i < payment.links.length; i++) {
-        if (payment.links[i].rel === "approval_url") {
-          res.redirect(payment.links[i].href);
-        }
-      }
-    }
   });
+
+  try {
+    const order = await client.execute(request);
+    res.status(200).json({ id: order.result });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 };
 
 exports.payPalPaymentSuccees = async (req, res) => {
