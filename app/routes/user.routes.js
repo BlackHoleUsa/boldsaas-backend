@@ -65,7 +65,7 @@ module.exports = function (app) {
 
   app.post("/api/paypal", userController.payPal);
 
-  app.get("/api/paypal-payment-success", userController.payPalPaymentSuccees);
+  // app.get("/api/paypal-payment-success", userController.payPalPaymentSuccees);
 
   app.get("/success", (req, res) => {
     res.send("Success");
@@ -73,5 +73,5 @@ module.exports = function (app) {
 
   app.get("/cancel", (req, res) => res.send("Cancelled"));
 
-  app.post("/strip-payment-success", userController.stripeBlockChain);
+  app.post("/payment-success", userController.paymentSuccessBlockChain);
 };

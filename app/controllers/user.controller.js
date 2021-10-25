@@ -38,7 +38,7 @@ exports.stripePayment = async (req, res) => {
   res.status(200).json(paymentIntent);
 };
 
-exports.stripeBlockChain = async (req, res) => {
+exports.paymentSuccessBlockChain = async (req, res) => {
   let token = req.headers["x-access-token"];
   let userId;
 
@@ -84,38 +84,38 @@ exports.payPal = async (req, res) => {
   }
 };
 
-exports.payPalPaymentSuccees = async (req, res) => {
-  const payerId = req.query.PayerID;
-  const paymentId = req.query.paymentId;
+// exports.payPalPaymentSuccees = async (req, res) => {
+//   // const payerId = req.query.PayerID;
+//   // const paymentId = req.query.paymentId;
 
-  const execute_payment_json = {
-    payer_id: payerId,
-    transactions: [
-      {
-        amount: {
-          currency: "USD",
-          total: "25.00",
-        },
-      },
-    ],
-  };
+//   // const execute_payment_json = {
+//   //   payer_id: payerId,
+//   //   transactions: [
+//   //     {
+//   //       amount: {
+//   //         currency: "USD",
+//   //         total: "25.00",
+//   //       },
+//   //     },
+//   //   ],
+//   // };
 
-  paypal.payment.execute(
-    paymentId,
-    execute_payment_json,
-    function (error, payment) {
-      if (error) {
-        throw error;
-      } else {
-        // userEmail = await find.find({ email: find.email });
-        // console.log(userEmail);
-        // blockchain(totalPrice, userEmail, price);
+//   // paypal.payment.execute(
+//   //   paymentId,
+//   //   execute_payment_json,
+//   //   function (error, payment) {
+//   //     if (error) {
+//   //       throw error;
+//   //     } else {
+//         // userEmail = await find.find({ email: find.email });
+//         // console.log(userEmail);
+//         // blockchain(totalPrice, userEmail, price);
 
-        res.send("Success");
-      }
-    }
-  );
-};
+//         res.send("Success");
+//       }
+//     }
+//   );
+// };
 
 exports.latestCoinPrice = async (req, res) => {
   const price = await coin.find().sort({ _id: -1 }).limit(1);
