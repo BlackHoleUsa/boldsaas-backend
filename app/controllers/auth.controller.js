@@ -81,8 +81,6 @@ exports.forgotPassword = async (req, res) => {
     });
   }
   const resetToken = dbUser.createPasswordResetToken();
-  await dbUser.save({ validateBeforeSave: false });
-
   const resetURL = `${resetToken}`;
 
   try {
@@ -91,6 +89,8 @@ exports.forgotPassword = async (req, res) => {
       "Reset Password ONLY VALID FOR 10 MINS",
       resetURL
     );
+
+    await dbUser.save({ validateBeforeSave: false });
 
     res.status(200).json({
       code: 200,
@@ -102,16 +102,17 @@ exports.forgotPassword = async (req, res) => {
 };
 
 exports.resetPassword = async (req, res) => {
+  //const { token } = req.params;
+
   const hashedToken = crypto
     .createHash("sha256")
     .update(req.params.token)
     .digest("hex");
 
-  console.log(hashedToken);
+  // console.log(hashedToken);
 
   const user = await User.findOne({
     passwordResetToken: hashedToken,
-    passwordResetExpires: { $gt: Date.now() },
   });
 
   if (!user) {
@@ -120,15 +121,16 @@ exports.resetPassword = async (req, res) => {
       message: "User not found",
     });
   }
+  // console.log(user);
 
   user.password = bcrypt.hashSync(req.body.password, 8);
   user.passwordResetToken = undefined;
   user.passwordResetExpires = undefined;
 
   await user.save();
+  // console.log("user=>", user);
 
   res.status(200).json({
-    status: 200,
     message: "Password changed successfully!",
   });
 };
