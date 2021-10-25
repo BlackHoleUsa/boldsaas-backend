@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 
-exports.sendEmail = async (email, subject, text) => {
+exports.sendEmail = async (email, subject, recovery_token) => {
   try {
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -15,7 +15,10 @@ exports.sendEmail = async (email, subject, text) => {
       to: email,
       subject: subject,
       // text: 'Reset Password ONLY VALID FOR 10 MINS',
-      html: text,
+      html:
+        '<p>Click <a href="http://localhost:3000/forgotpassword?token=' +
+        recovery_token +
+        '">here</a> to reset your password</p>',
     };
 
     transporter.sendMail(mailOptions, function (err, info) {
