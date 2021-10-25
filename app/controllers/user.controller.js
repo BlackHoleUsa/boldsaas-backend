@@ -11,6 +11,8 @@ const stripe = require("stripe")(process.env.Private_Api_Key);
 const paypal = require("@paypal/checkout-server-sdk");
 const { blockchain } = require("../contractInfo/Sample");
 
+process.env.NODE_ENV === "development";
+
 const Environment =
   process.env.NODE_ENV === "production"
     ? paypal.core.LiveEnvironment
