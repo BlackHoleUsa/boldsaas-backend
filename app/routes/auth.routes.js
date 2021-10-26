@@ -26,5 +26,5 @@ module.exports = function (app) {
     controller.forgotPassword
   );
 
-  app.put("/api/auth/reset-password/:token", controller.resetPassword);
+  app.patch("/api/auth/reset-password/:token", controller.resetPassword);
 };

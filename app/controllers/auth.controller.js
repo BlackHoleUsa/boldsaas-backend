@@ -104,8 +104,6 @@ exports.forgotPassword = async (req, res) => {
 exports.resetPassword = async (req, res) => {
   //const { token } = req.params;
 
-  console.log("eeeee=> ", req);
-
   const hashedToken = crypto
     .createHash("sha256")
     .update(req.params.token)
@@ -115,6 +113,7 @@ exports.resetPassword = async (req, res) => {
 
   const user = await User.findOne({
     passwordResetToken: hashedToken,
+    passwordResetExpires: { $gt: Date.now() },
   });
 
   if (!user) {
@@ -123,7 +122,6 @@ exports.resetPassword = async (req, res) => {
       message: "User not found",
     });
   }
-  // console.log(user);
 
   user.password = bcrypt.hashSync(req.body.password, 8);
   user.passwordResetToken = undefined;
