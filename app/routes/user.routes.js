@@ -46,6 +46,7 @@ module.exports = function (app) {
   );
 
   app.get("/api/latest", userController.latestCoinPrice);
+
   app.post(
     "/api/admin/coin-price-update",
     [authJwt.isAdmin, authJwt.verifyToken],
@@ -57,21 +58,15 @@ module.exports = function (app) {
 
   app.post("/payment", userController.stripePayment);
 
-  app.get("/go", (req, res) =>
-    res.render("index", {
-      paypalClientId: process.env.PayPal_Client_Id,
-    })
-  );
-
   app.post("/api/paypal", userController.payPal);
 
-  // app.get("/api/paypal-payment-success", userController.payPalPaymentSuccees);
+  app.get(
+    "/api/paypal-payment-success/:id",
+    userController.payPalPaymentSuccees
+  );
 
-  app.get("/success", (req, res) => {
-    res.send("Success");
-  });
-
-  app.get("/cancel", (req, res) => res.send("Cancelled"));
-
-  app.post("/payment-success", userController.paymentSuccessBlockChain);
+  app.post(
+    "/stripe-payment-success",
+    userController.stripePaymentSuccessBlockChain
+  );
 };
