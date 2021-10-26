@@ -104,11 +104,11 @@ exports.forgotPassword = async (req, res) => {
 exports.resetPassword = async (req, res) => {
   //const { token } = req.params;
 
-  console.log("fff=>", req.body.token);
+  console.log("eeeee=> ", req);
 
   const hashedToken = crypto
     .createHash("sha256")
-    .update(req.body.token)
+    .update(req.params.token)
     .digest("hex");
 
   // console.log(hashedToken);
