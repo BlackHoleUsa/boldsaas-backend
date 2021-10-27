@@ -133,16 +133,12 @@ exports.payPalPaymentSuccees = async (req, res) => {
       const amount = parseInt(resposne.data.gross_total_amount.value);
       console.log(amount);
       const totalShare = amount / latestPrice;
-      console.log(totalShare);
-      console.log(user.email);
-      console.log(latestPrice);
 
       const blockChain = await updateLedger(
         totalShare,
         user.email,
         latestPrice
       );
-      -m;
       if (blockChain) {
         res.status(200).json({ messege: "Success" });
       }
