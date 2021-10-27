@@ -94,7 +94,6 @@ exports.payPal = async (req, res) => {
 };
 
 exports.payPalPaymentSuccees = async (req, res) => {
-  let clinetToken = process.env.PAYPAL_TOKEN;
   let token = req.headers["x-access-token"];
   let userId;
 
@@ -112,11 +111,12 @@ exports.payPalPaymentSuccees = async (req, res) => {
   //console.log(user);
   console.log(user.email);
   const price = await coin.find().sort({ _id: -1 }).limit(1);
+  const clientToken = await Token.find().sort({ _id: -1 }).limit(1);
 
   const configs = {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${clinetToken}`,
+      Authorization: `Bearer ${clientToken}`,
     },
   };
   try {
