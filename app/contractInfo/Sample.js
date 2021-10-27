@@ -1,56 +1,61 @@
-const Web3 = require('web3');
-const EthereumTx = require('ethereumjs-tx').Transaction;
-var contractInfo = require('./ledgerContract');
+const Web3 = require('web3')
+const Tx = require('ethereumjs-tx');
+const ContractInfo = require('./ledgerContract');
 
-const provider = "https://data-seed-prebsc-2-s2.binance.org:8545"
-const web3 = new Web3(new Web3.providers.HttpProvider(infura));
-var abi = contractInfo.LEDGER_CONTRACT_ABI;
-var address = contractInfo.LEDGER_CONTRACT_ADDRESS;
-
-var pk = "d1a0c384ba901eac06a18cd5a5fbe90d38c21f1437ee30dd51b1123862897fda";
-web3.eth.defaultAccount = "0xa08a9bA3EaC7EC46FB2e6072A966219cD98D6D69";
+const RPC = "https://data-seed-prebsc-2-s2.binance.org:8545";
 
 
-// dummy values
-var amount = 10000000000; // 8 decimal places (100 x 1e^8)
-var user = "usman@test.com";
-var price = 100; // 2 decimal places (1 x 1e^2)
+// function to mint on binance blockchain. 
+module.exports.updateLedger = async ()=> {
+
+  const web3 = new Web3(RPC)
+
+  const contract = new web3.eth.Contract(ContractInfo.LEDGER_CONTRACT_ABI, ContractInfo.LEDGER_CONTRACT_ADDRESS);
+
+  const secretkey = "d1a0c384ba901eac06a18cd5a5fbe90d38c21f1437ee30dd51b1123862897fda";
+  const adminAdd = "0xa08a9bA3EaC7EC46FB2e6072A966219cD98D6D69"; 
+  
+  const privateKey = Buffer.from(secretkey, 'hex');
+  const privateKeyBuffer = EthUtil.toBuffer(privateKey);
+
+  data = contract.methods.updateLedger(amount,userId,price, '0x').encodeABI();
+
+  var nonce
+  var gasPrice
 
 
-web3.eth.getTransactionCount(web3.eth.defaultAccount, function (err, nonce) {
-    const contract = new web3.eth.Contract(abi, address, {
-    from: web3.eth.defaultAccount ,
-    gas: 7000000,
-    })
-    const functionAbi = contract.methods.updateLedger(amount, user, price).encodeABI();
-    var details = {
-    "nonce": nonce,
-    "gasPrice": web3.utils.toHex(web3.utils.toWei('85', 'gwei')),
-    "gas": 700000,
-    "to": address,
-    "value": 0,
-    "data": functionAbi,
-    };
+  try{
+      nonce = await web3.eth.getTransactionCount(adminAdd);
+      gasPrice = await web3.eth.getGasPrice();
 
+  }
+  catch(e){
+      throw e
+  }
 
-    const transaction = new EthereumTx(details, {chain: 'Smart Chain - Testnet'});
-    transaction.sign(Buffer.from(pk, 'hex') );
-    var rawData = '0x' + transaction.serialize().toString('hex');
-    
-    web3.eth.sendSignedTransaction(rawData)
-    .on('transactionHash', function(hash){
-    console.log(['transferToStaging Trx Hash:' + hash]);
-    })
-    .on('receipt', function(receipt){
-    console.log(['transferToStaging Receipt:', receipt]);
-    })
-    .on('error', console.error);
-    });        
+  const rawTx = {
 
+      from: adminAdd,
+      to: ContractInfo.LEDGER_CONTRACT_ADDRESS,
+      gasLimit: web3.utils.toHex(7000000),
+      gasPrice: web3.utils.toHex(gasPrice),
+      nonce: web3.utils.toHex(nonce),
+      data: data,
+  };
 
+  const tx = new Tx(rawTx);
+  tx.sign(privateKeyBuffer);
+  var rawData = '0x' + tx.serialize().toString('hex');
 
-// 31 days = "0 */744 * * *""
+  return new Promise(resolve => {
+      
+        web3.eth.sendSignedTransaction(rawData)
+        .on('transactionHash', function(hash){
+            console.log("Ledger update tx completed:", hash);
+            resolve(true);
+        });
+      
+    });
 
-
-
+}
 

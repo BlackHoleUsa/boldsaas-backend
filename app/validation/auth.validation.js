@@ -32,6 +32,9 @@ const schemas = {
   value: Joi.object().keys({
     value: Joi.number().required(),
   }),
+  emails: Joi.object().keys({
+    email: Joi.string().required(),
+  }),
   // define all the other schemas below
 };
 module.exports = schemas;

@@ -16,22 +16,15 @@ exports.getAllUsers = async (req, res) => {
 exports.blockUser = async (req, res) => {
   console.log("Inside =>", req.body.email);
 
-  const block = await user
-    .updateOne({ email: req.body.email }, { $set: { is_Blocked: "true" } })
-    .lean()
-    .exec((err, user) => {
-      if (err) {
-        res.status(500).send({ message: err });
-        return;
-      }
+  const block = await user.updateOne(
+    { email: req.body.email },
+    { $set: { is_Blocked: "true" } }
+  );
 
-      if (!user) {
-        return res.status(404).send({ message: "User Not found." });
-      }
-      if (user) {
-        return res.status(200).send({ message: "User Blocked Sucessfully" });
-      }
-    });
+  if (block.nModified === 1) {
+    res.status(200).send({ message: "User Blocked Sucessfully" });
+  }
+  res.status(404).send({ message: "User not Blocked " });
 };
 
 exports.resetPassword = async (req, res) => {

@@ -5,17 +5,20 @@ const config = require("../config/auth.config.js");
 const db = require("../models");
 const User = db.user;
 require("dotenv").config();
+const axios = require("axios");
 
 const stripe = require("stripe")(process.env.Private_Api_Key);
 
-const paypal = require("paypal-rest-sdk");
+const paypal = require("@paypal/checkout-server-sdk");
+const { blockchain } = require("../contractInfo/Sample");
 
-paypal.configure({
-  mode: "sandbox", //sandbox or live
-  client_id: process.env.PayPal_Client_Id,
-
-  client_secret: process.env.PayPal_Secret_Id,
-});
+const Environment =
+  process.env.NODE_ENV === "production"
+    ? paypal.core.LiveEnvironment
+    : paypal.core.SandboxEnvironment;
+const client = new paypal.core.PayPalHttpClient(
+  new Environment(process.env.PayPal_Client_Id, process.env.PayPal_Secret_Id)
+);
 
 exports.coinPriceHistroy = async (req, res) => {
   const value = await coin.find({}).lean();
@@ -26,126 +29,108 @@ exports.coinPriceHistroy = async (req, res) => {
   res.status(200).json({ messege: value });
 };
 
-exports.stripePage = async (req, res) => {
-  res.render("home", {
-    key: process.env.Public_Api_Key,
+exports.stripePayment = async (req, res) => {
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: req.body.price,
+    currency: "usd",
+    receipt_email: req.body.email,
   });
+
+  res.status(200).json(paymentIntent);
 };
 
-exports.stripePayment = async (req, res) => {
+exports.stripePaymentSuccessBlockChain = async (req, res) => {
   let token = req.headers["x-access-token"];
-  let find;
+  let userId;
 
   if (!token) {
     return res.status(403).json({ message: "No token provided!" });
   }
 
-  jwt.verify(token, config.secret, async (err, decoded) => {
+  jwt.verify(token, config.secret, (err, decoded) => {
     if (err) {
       return res.status(401).json({ message: "Unauthorized!" });
     }
-    req.userId = decoded.id;
-
-    find = await User.findOne({
-      _id: decoded.id,
-      is_Admin: true,
-      token: token,
-    }).lean();
+    id = decoded.id;
   });
-  stripe.customers
-    .create({
-      email: req.body.email,
-      source: req.body.token,
-    })
-    .then((customers) => {
-      return stripe.charges.create({
-        amount: 20,
-        description: "Thanks for buying your subscription",
-        currency: "USD",
-        customer: customer.id,
-      });
-    })
-    .then((charges) => {
-      find.update({ purchase: true });
-
-      res.send("Succes");
-    })
-    .catch((err) => {
-      res.send(err);
-    });
+  const user = await User.findOne({ id: userId }).lean();
+  //console.log(user);
+  console.log(user.email);
+  const price = await coin.find().sort({ _id: -1 }).limit(1);
+  try {
+    const intent = await stripe.paymentIntents.retrieve(req.body.id);
+    console.log(intent);
+    if (intent.status === "succeeded") {
+      console.log("blockchain part");
+      res.status(200).json({ messege: "Successfully" });
+    }
+  } catch (e) {
+    console.log(e);
+    res.send(e);
+  }
 };
 
 exports.payPal = async (req, res) => {
-  const create_payment_json = {
-    intent: "sale",
-    payer: {
-      payment_method: "paypal",
-    },
-    redirect_urls: {
-      return_url: "http://localhost:8080/api/paypal-payment-success",
-      cancel_url: "http://localhost:8080/cancel",
-    },
-    transactions: [
+  let request = new paypal.orders.OrdersCreateRequest();
+  request.requestBody({
+    intent: "CAPTURE",
+    purchase_units: [
       {
-        item_list: {
-          items: [
-            {
-              name: "Red Sox Hat",
-              price: "25.00", // req.body.price,
-              currency: "USD",
-              quantity: 1, // req.body.quantity,
-            },
-          ],
-        },
         amount: {
-          currency: "USD",
-          total: "25.00", // to be decided
+          currency_code: "USD",
+          value: req.body.totalPrice,
         },
-        description: "Thank You for buying the tokens",
       },
     ],
-  };
-
-  paypal.payment.create(create_payment_json, function (error, payment) {
-    if (error) {
-      throw error;
-    } else {
-      for (let i = 0; i < payment.links.length; i++) {
-        if (payment.links[i].rel === "approval_url") {
-          res.redirect(payment.links[i].href);
-        }
-      }
-    }
   });
+
+  try {
+    const order = await client.execute(request);
+    res.status(200).json({ id: order.result });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ error: e.message });
+  }
 };
 
 exports.payPalPaymentSuccees = async (req, res) => {
-  const payerId = req.query.PayerID;
-  const paymentId = req.query.paymentId;
+  let clinetToken = process.env.PAYPAL_TOKEN;
+  let token = req.headers["x-access-token"];
+  let userId;
 
-  const execute_payment_json = {
-    payer_id: payerId,
-    transactions: [
-      {
-        amount: {
-          currency: "USD",
-          total: "25.00",
-        },
-      },
-    ],
-  };
+  if (!token) {
+    return res.status(403).json({ message: "No token provided!" });
+  }
 
-  paypal.payment.execute(
-    paymentId,
-    execute_payment_json,
-    function (error, payment) {
-      if (error) {
-        throw error;
-      } else {
-        res.send("Success");
-      }
+  jwt.verify(token, config.secret, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ message: "Unauthorized!" });
     }
-  );
+    id = decoded.id;
+  });
+  const user = await User.findOne({ id: userId }).lean();
+  //console.log(user);
+  console.log(user.email);
+  const price = await coin.find().sort({ _id: -1 }).limit(1);
+
+  const configs = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${clinetToken}`,
+    },
+  };
+  try {
+    const resposne = await axios(
+      `https://api-m.sandbox.paypal.com/v1/checkout/orders/${req.params.id}`,
+      configs
+    );
+    if (resposne.data.status === "COMPLETED") {
+      console.log("blockChain");
+      res.status(200).json({ messege: "Success" });
+    }
+  } catch (e) {
+    res.status(404).json({ message: e });
+  }
 };
 
 exports.latestCoinPrice = async (req, res) => {

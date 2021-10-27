@@ -41,32 +41,32 @@ module.exports = function (app) {
   app.put(
     "/api/admin/password-reset",
     [authJwt.verifyToken],
+    middlewares(validate.value),
     adminController.resetPassword
   );
 
   app.get("/api/latest", userController.latestCoinPrice);
+
   app.post(
     "/api/admin/coin-price-update",
-    [authJwt.isAdmin],
+    [authJwt.isAdmin, authJwt.verifyToken],
     middlewares(validate.value),
     adminController.priceUpdate
   );
 
   // app.get("/api/coin-price-histroy", userController.coinPriceHistroy);
 
-  app.get("/api/stripe-page", userController.stripePage);
-
-  app.post("/api/payment", userController.stripePayment);
-
-  app.get("/go", (req, res) => res.render("paypal"));
+  app.post("/payment", userController.stripePayment);
 
   app.post("/api/paypal", userController.payPal);
 
-  app.get("/api/paypal-payment-success", userController.payPalPaymentSuccees);
+  app.get(
+    "/api/paypal-payment-success/:id",
+    userController.payPalPaymentSuccees
+  );
 
-  app.get("/success", (req, res) => {
-    res.send("Success");
-  });
-
-  app.get("/cancel", (req, res) => res.send("Cancelled"));
+  app.post(
+    "/stripe-payment-success",
+    userController.stripePaymentSuccessBlockChain
+  );
 };
