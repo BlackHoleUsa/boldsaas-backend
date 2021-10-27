@@ -1,12 +1,12 @@
 export const LEDGER_CONTRACT_ADDRESS =
-  "0x50DfB256D2a6794e158FbA77547096064a556793";
+  "0x682552c284E3fA35929474bB281dF5A427D63231";
 
 export const LEDGER_CONTRACT_ABI = [
 	{
 		"inputs": [
 			{
-				"internalType": "contract ICOToken",
-				"name": "token",
+				"internalType": "address",
+				"name": "tokenAddress",
 				"type": "address"
 			}
 		],
@@ -37,8 +37,59 @@ export const LEDGER_CONTRACT_ABI = [
 		"constant": true,
 		"inputs": [
 			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "UserPurchaseList",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
 				"internalType": "string",
-				"name": "owner",
+				"name": "userId",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "shares",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "price",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "amount_",
+				"type": "uint256"
+			}
+		],
+		"name": "adminWithdraw",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "user",
 				"type": "string"
 			},
 			{
@@ -47,7 +98,7 @@ export const LEDGER_CONTRACT_ABI = [
 				"type": "uint256"
 			}
 		],
-		"name": "getOwnerIdIndex",
+		"name": "getUserIdIndex",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -64,16 +115,31 @@ export const LEDGER_CONTRACT_ABI = [
 		"inputs": [
 			{
 				"internalType": "string",
-				"name": "owner",
+				"name": "user",
 				"type": "string"
 			}
 		],
-		"name": "getOwnerIds",
+		"name": "getUserIds",
 		"outputs": [
 			{
 				"internalType": "uint256[]",
 				"name": "",
 				"type": "uint256[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "idCounter",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
 			}
 		],
 		"payable": false,
@@ -111,42 +177,6 @@ export const LEDGER_CONTRACT_ABI = [
 		"type": "function"
 	},
 	{
-		"constant": true,
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "txHistoryList",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "userId",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "tokenAmount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "price",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
 		"constant": false,
 		"inputs": [
 			{
@@ -166,21 +196,6 @@ export const LEDGER_CONTRACT_ABI = [
 			}
 		],
 		"name": "updateLedger",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "amount_",
-				"type": "uint256"
-			}
-		],
-		"name": "withdrawTokens",
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
