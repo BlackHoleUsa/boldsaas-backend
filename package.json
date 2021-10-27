@@ -4,7 +4,7 @@
   "description": "Node.js + MongoDB: JWT Authentication & Authorization",
   "main": "server.js",
   "scripts": {
-    "start": "NODE_ENV = production nodemon server.js ",
+    "start": "NODE_ENV=development nodemon server.js ",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
