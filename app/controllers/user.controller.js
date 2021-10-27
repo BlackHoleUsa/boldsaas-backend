@@ -6,11 +6,12 @@ const db = require("../models");
 const User = db.user;
 require("dotenv").config();
 const axios = require("axios");
+const Token = require("../models/token");
 
 const stripe = require("stripe")(process.env.Private_Api_Key);
 
 const paypal = require("@paypal/checkout-server-sdk");
-const { blockchain } = require("../contractInfo/Sample");
+const { updateLedger } = require("../contractInfo/Sample");
 
 const Environment =
   process.env.NODE_ENV === "production"
@@ -61,7 +62,8 @@ exports.stripePaymentSuccessBlockChain = async (req, res) => {
     const intent = await stripe.paymentIntents.retrieve(req.body.id);
     console.log(intent);
     if (intent.status === "succeeded") {
-      console.log("blockchain part");
+      const blockchain = await updateLedger(user.email, 12, price);
+      console.log("blockchain part", blockchain);
       res.status(200).json({ messege: "Successfully" });
     }
   } catch (e) {
@@ -111,12 +113,13 @@ exports.payPalPaymentSuccees = async (req, res) => {
   //console.log(user);
   console.log(user.email);
   const price = await coin.find().sort({ _id: -1 }).limit(1);
-  const clientToken = await Token.find().sort({ _id: -1 }).limit(1);
+  const clientToken = await Token.findOne({});
+  console.log(clientToken.token);
 
   const configs = {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${clientToken}`,
+      Authorization: `Bearer ${clientToken.token}`,
     },
   };
   try {
@@ -124,11 +127,15 @@ exports.payPalPaymentSuccees = async (req, res) => {
       `https://api-m.sandbox.paypal.com/v1/checkout/orders/${req.params.id}`,
       configs
     );
+    //console.log(resposne);
     if (resposne.data.status === "COMPLETED") {
-      console.log("blockChain");
+      console.log("IN");
+      const blockchain = await updateLedger(12, "1", 1);
+      console.log(blockchain);
       res.status(200).json({ messege: "Success" });
     }
   } catch (e) {
+    console.log(e);
     res.status(404).json({ message: e });
   }
 };

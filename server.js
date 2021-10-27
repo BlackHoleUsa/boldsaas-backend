@@ -42,7 +42,7 @@ db.mongoose
 
 require("./app/routes/auth.routes")(app);
 require("./app/routes/user.routes")(app);
-require("./app/cronjob/token.generation")(app);
+//require("./app/cronjob/token.generation")(app);
 
 const PORT = process.env.PORT || 4015;
 
