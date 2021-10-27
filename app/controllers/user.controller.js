@@ -52,23 +52,26 @@ exports.stripePaymentSuccessBlockChain = async (req, res) => {
     if (err) {
       return res.status(401).json({ message: "Unauthorized!" });
     }
-    id = decoded.id;
+    userId = decoded.id;
   });
-  const user = await User.findOne({ id: userId }).lean();
-  //console.log(user);
-  console.log(user.email);
+  const user = await User.findOne({ _id: userId }).lean();
   const price = await coin.find().sort({ _id: -1 }).limit(1);
+  const coinPrice = price[0].coin_price;
+
   try {
     const intent = await stripe.paymentIntents.retrieve(req.body.id);
-    console.log(intent);
     if (intent.status === "succeeded") {
-      const blockchain = await updateLedger(user.email, 12, price);
-      console.log("blockchain part", blockchain);
-      res.status(200).json({ messege: "Successfully" });
+      const total = parseInt(intent.amount);
+      const amount = total / 100;
+      const final = amount / coinPrice;
+
+      const blockchain = await updateLedger(final, user.email, coinPrice);
+      if (blockchain) {
+        res.status(200).json({ messege: "Success" });
+      }
     }
   } catch (e) {
-    console.log(e);
-    res.send(e);
+    res.status(500).json({ error: e.message });
   }
 };
 
@@ -90,7 +93,6 @@ exports.payPal = async (req, res) => {
     const order = await client.execute(request);
     res.status(200).json({ id: order.result });
   } catch (e) {
-    console.log(e);
     res.status(500).json({ error: e.message });
   }
 };
@@ -107,14 +109,14 @@ exports.payPalPaymentSuccees = async (req, res) => {
     if (err) {
       return res.status(401).json({ message: "Unauthorized!" });
     }
-    id = decoded.id;
+    userId = decoded.id;
   });
-  const user = await User.findOne({ id: userId }).lean();
-  //console.log(user);
-  console.log(user.email);
+
+  const user = await User.findOne({ _id: userId }).lean();
+
   const price = await coin.find().sort({ _id: -1 }).limit(1);
+  const latestPrice = parseInt(price[0].coin_price);
   const clientToken = await Token.findOne({});
-  console.log(clientToken.token);
 
   const configs = {
     headers: {
@@ -127,16 +129,27 @@ exports.payPalPaymentSuccees = async (req, res) => {
       `https://api-m.sandbox.paypal.com/v1/checkout/orders/${req.params.id}`,
       configs
     );
-    //console.log(resposne);
     if (resposne.data.status === "COMPLETED") {
-      console.log("IN");
-      const blockchain = await updateLedger(12, "1", 1);
-      console.log(blockchain);
-      res.status(200).json({ messege: "Success" });
+      const amount = parseInt(resposne.data.gross_total_amount.value);
+      console.log(amount);
+      const totalShare = amount / latestPrice;
+      console.log(totalShare);
+      console.log(user.email);
+      console.log(latestPrice);
+
+      const blockChain = await updateLedger(
+        totalShare,
+        user.email,
+        latestPrice
+      );
+      -m;
+      if (blockChain) {
+        res.status(200).json({ messege: "Success" });
+      }
     }
   } catch (e) {
-    console.log(e);
-    res.status(404).json({ message: e });
+    console.log("error=>", e);
+    res.status(500).json({ error: e.message });
   }
 };
 

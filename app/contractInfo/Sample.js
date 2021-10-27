@@ -1,10 +1,10 @@
 const Web3 = require("web3");
-// const Tx = require("ethereumjs-tx");
-var Tx = require("ethereumjs-tx").Transaction;
+const Tx = require("ethereumjs-tx");
+//var Tx = require("ethereumjs-tx").Transaction;
 const ContractInfo = require("./ledgerContract");
 const EthUtil = require("ethereumjs-util");
 
-const RPC = "https://data-seed-prebsc-2-s2.binance.org:8545";
+const RPC = "https://data-seed-prebsc-2-s2.binance.org:8545/";
 
 // function to mint on binance blockchain.
 module.exports.updateLedger = async (amount, userId, price) => {

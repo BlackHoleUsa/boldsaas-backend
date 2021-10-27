@@ -23,7 +23,7 @@
 //       },
 //     });
 
-//     console.log("access_token: ", access_token);
+//     // console.log("access_token: ", access_token);
 
 //     const findDoc = await Token.findOne({});
 //     if (findDoc) {
@@ -33,6 +33,7 @@
 //       );
 //       console.log("update");
 //     } else {
+//       console.log("first");
 //       const findDoc = await Token.create({ token: access_token });
 //     }
 
@@ -43,7 +44,7 @@
 // }
 
 // module.exports = () => {
-//   nodeCron.schedule("* */14 * * * *", () => {
+//   nodeCron.schedule("* * */100 * * *", () => {
 //     console.log("tsst");
 //     tokenGeneration();
 //   });
