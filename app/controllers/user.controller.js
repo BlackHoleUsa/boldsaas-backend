@@ -94,18 +94,35 @@ exports.payPal = async (req, res) => {
 };
 
 exports.payPalPaymentSuccees = async (req, res) => {
-  let token = process.env.PAYPAL_TOKEN;
+  let clinetToken = process.env.PAYPAL_TOKEN;
+  let token = req.headers["x-access-token"];
+  let userId;
 
-  const config = {
+  if (!token) {
+    return res.status(403).json({ message: "No token provided!" });
+  }
+
+  jwt.verify(token, config.secret, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ message: "Unauthorized!" });
+    }
+    id = decoded.id;
+  });
+  const user = await User.findOne({ id: userId }).lean();
+  //console.log(user);
+  console.log(user.email);
+  const price = await coin.find().sort({ _id: -1 }).limit(1);
+
+  const configs = {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${clinetToken}`,
     },
   };
   try {
     const resposne = await axios(
       `https://api-m.sandbox.paypal.com/v1/checkout/orders/${req.params.id}`,
-      config
+      configs
     );
     if (resposne.data.status === "COMPLETED") {
       console.log("blockChain");
