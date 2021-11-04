@@ -10,7 +10,7 @@ app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(
   cors({
-    origin: ["http://blackhole@sardartufani.com", "http://localhost:3000"],
+    origin: ["http://blackhole@sardartufani.com/", "http://localhost:3000"],
     methods: ["POST", "PUT", "GET", "DELETE", "OPTIONS", "HEAD", "PATCH"],
     credentials: true,
   })
