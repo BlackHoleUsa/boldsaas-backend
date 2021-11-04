@@ -120,15 +120,12 @@ exports.resetPassword = async (req, res) => {
 
   const user = await User.findOne({
     passwordResetToken: hashedToken,
-    passwordResetExpires: {
-      $gt: new Date.getTime() - 1000 * 60 * 10,
-    },
   });
 
   if (!user) {
     return res.status(404).json({
       status: 404,
-      message: "User not found",
+      message: "Time Expire",
     });
   }
 

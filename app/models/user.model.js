@@ -35,8 +35,16 @@ const UserSchema = new mongoose.Schema({
   },
 
   passwordChangedAt: Date,
-  passwordResetToken: String,
-  passwordResetExpires: Date,
+  passwordResetToken: {
+    type: String,
+    expires: "1m",
+    default: Date.now,
+  },
+  passwordResetExpires: {
+    type: Date,
+    expires: "1m",
+    default: Date.now,
+  },
 });
 
 UserSchema.methods.createPasswordResetToken = function () {
