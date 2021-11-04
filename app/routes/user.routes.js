@@ -41,7 +41,6 @@ module.exports = function (app) {
   app.put(
     "/api/admin/password-reset",
     [authJwt.verifyToken],
-    middlewares(validate.value),
     adminController.resetPassword
   );
 

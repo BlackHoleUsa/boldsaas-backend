@@ -8,11 +8,15 @@ const path = require("path");
 const app = express();
 app.set("view engine", "ejs");
 app.use(express.static("public"));
-var corsOptions = {
-  origin: "http://localhost:3000",
-};
+app.use(
+  cors({
+    origin: ["http://blackhole@sardartufani.com", "http://localhost:3000"],
+    methods: ["POST", "PUT", "GET", "DELETE", "OPTIONS", "HEAD", "PATCH"],
+    credentials: true,
+  })
+);
 
-app.use(cors(corsOptions));
+app.options("*", cors());
 app.use(helmet());
 app.use(xss());
 

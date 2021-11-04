@@ -16,7 +16,7 @@ exports.sendEmail = async (email, subject, recovery_token) => {
       subject: subject,
       // text: 'Reset Password ONLY VALID FOR 10 MINS',
       html:
-        '<p>Click <a href="http://localhost:3000/forgotpassword?token=' +
+        '<p>Click <a href="http://blackhole@sardartufani.com/projects/bolt-saas/forgotpassword?token=' +
         recovery_token +
         '">here</a> to reset your password</p>',
     };

@@ -28,6 +28,7 @@ exports.signup = async (req, res) => {
 exports.signin = async (req, res) => {
   const user2 = await User.findOne({
     email: req.body.email,
+    is_Blocked: false,
   }).exec(async (err, user) => {
     if (err) {
       res.status(500).json({ message: err });
