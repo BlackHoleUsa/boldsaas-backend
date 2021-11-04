@@ -16,12 +16,12 @@ exports.sendEmail = async (email, subject, recovery_token) => {
       subject: subject,
       // text: 'Reset Password ONLY VALID FOR 10 MINS',
       html:
-        '<p>Click <a href="http://blackhole@sardartufani.com/projects/bolt-saas/forgotpassword?token=' +
+        '<p>Click <a href="http://sardartufani.com/projects/bolt-saas/#/forgotpassword?token=' +
         recovery_token +
         '">here</a> to reset your password</p>',
     };
 
-    transporter.sendMail(mailOptions, function (err, info) {
+    http: transporter.sendMail(mailOptions, function (err, info) {
       if (err) {
         console.log(err);
       } else {

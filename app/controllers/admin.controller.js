@@ -14,8 +14,6 @@ exports.getAllUsers = async (req, res) => {
 };
 
 exports.blockUser = async (req, res) => {
-  console.log("Inside =>", req.body.email);
-
   const block = await user.updateOne(
     { email: req.body.email },
     { $set: { is_Blocked: "true" } }

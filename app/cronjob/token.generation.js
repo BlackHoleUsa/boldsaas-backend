@@ -22,7 +22,7 @@ async function tokenGeneration() {
         grant_type: "client_credentials",
       },
     });
-
+    
     const findDoc = await Token.findOne({});
     if (findDoc) {
       const find = await Token.findOneAndUpdate(
@@ -38,7 +38,7 @@ async function tokenGeneration() {
 }
 
 module.exports = () => {
-  nodeCron.schedule("*/13 * * * *", () => {
+  nodeCron.schedule("*/1 * * * *", () => {
     tokenGeneration();
   });
 };

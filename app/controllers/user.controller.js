@@ -59,14 +59,11 @@ exports.stripePaymentSuccessBlockChain = async (req, res) => {
   const coinPrice = price[0].coin_price;
 
   try {
-    console.log("iN");
     const intent = await stripe.paymentIntents.retrieve(req.body.id);
-    if (intent) {
-      console.log(intent);
+    if (intent.status === "succeeded") {
       const total = parseInt(intent.amount);
       const amount = total / 100;
       const final = amount / coinPrice;
-      console.log("WAIT");
       const blockchain = await updateLedger(final, user.email, coinPrice);
       if (blockchain) {
         res.status(200).json({ messege: "Success" });
@@ -133,7 +130,6 @@ exports.payPalPaymentSuccees = async (req, res) => {
     );
     if (resposne.data.status === "COMPLETED") {
       const amount = parseInt(resposne.data.gross_total_amount.value);
-      console.log(amount);
       const totalShare = amount / latestPrice;
 
       const blockChain = await updateLedger(

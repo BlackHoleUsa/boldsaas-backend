@@ -93,6 +93,12 @@ exports.forgotPassword = async (req, res) => {
 
     await dbUser.save({ validateBeforeSave: false });
 
+    setTimeout(() => {
+      console.log("11111");
+      this.passwordResetExpires = null;
+      this.passwordResetToken = null;
+    }, 10000);
+
     res.status(200).json({
       code: 200,
       message: "Password reset email has been successfully sent to your email",
@@ -114,7 +120,9 @@ exports.resetPassword = async (req, res) => {
 
   const user = await User.findOne({
     passwordResetToken: hashedToken,
-    passwordResetExpires: { $gt: Date.now() },
+    passwordResetExpires: {
+      $gt: new Date(ISODate().getTime() - 1000 * 60 * 10),
+    },
   });
 
   if (!user) {
