@@ -8,6 +8,7 @@ const path = require("path");
 const app = express();
 app.set("view engine", "ejs");
 app.use(express.static("public"));
+
 app.use(
   cors({
     origin: ["http://blackhole@sardartufani.com/", "http://localhost:3000"],
