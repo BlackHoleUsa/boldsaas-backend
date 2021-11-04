@@ -15,6 +15,7 @@ app.use(
       "http://blackhole@sardartufani.com/",
       "http://localhost:3000",
       "http://sardartufani.com/",
+      "http://blackhole@sardartufani.com/projects/bolt-saas",
     ],
     methods: ["POST", "PUT", "GET", "DELETE", "OPTIONS", "HEAD", "PATCH"],
     credentials: true,
