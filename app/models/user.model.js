@@ -37,12 +37,12 @@ const UserSchema = new mongoose.Schema({
   passwordChangedAt: Date,
   passwordResetToken: {
     type: String,
-    expires: "1m",
+    expires: "10m",
     default: Date.now,
   },
   passwordResetExpires: {
     type: Date,
-    expires: "1m",
+    expires: "10m",
     default: Date.now,
   },
 });

@@ -93,12 +93,6 @@ exports.forgotPassword = async (req, res) => {
 
     await dbUser.save({ validateBeforeSave: false });
 
-    setTimeout(() => {
-      console.log("11111");
-      this.passwordResetExpires = null;
-      this.passwordResetToken = null;
-    }, 10000);
-
     res.status(200).json({
       code: 200,
       message: "Password reset email has been successfully sent to your email",
