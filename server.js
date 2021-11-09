@@ -50,13 +50,12 @@ db.mongoose
     console.error("Connection error", err);
     process.exit();
   });
-  
+
 require("./app/cronjob/token.generation")();
 require("./app/routes/auth.routes")(app);
 require("./app/routes/user.routes")(app);
-require("./app/cronjob/token.generation")(app);
 
-const PORT = process.env.PORT || 4015;
+const PORT = process.env.PORT || 4017;
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);

@@ -24,13 +24,15 @@ async function tokenGeneration() {
       },
     });
 
+    //console.log("updated token", access_token);
     const findDoc = await Token.findOne({});
+    console.log("found", findDoc);
     if (findDoc) {
       const find = await Token.findOneAndUpdate(
         { _id: findDoc._id },
         { token: access_token }
       );
-      console.log("updated token");
+      console.log("Update Token", access_token);
     } else {
       const findDoc = await Token.create({ token: access_token });
     }
@@ -40,7 +42,7 @@ async function tokenGeneration() {
 }
 
 module.exports = () => {
-  const cron = nodeCron.schedule("*/5 * * * *", () => {
+  const cron = nodeCron.schedule("*/1 * * * *", () => {
     tokenGeneration();
   });
 };
