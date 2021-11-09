@@ -5,6 +5,7 @@ const dbConfig = require("./app/config/db.config");
 const helmet = require("helmet");
 var xss = require("xss-clean");
 const path = require("path");
+const morgan = require("morgan");
 const app = express();
 app.set("view engine", "ejs");
 app.use(express.static("public"));
@@ -25,7 +26,7 @@ app.use(
 app.options("*", cors());
 app.use(helmet());
 app.use(xss());
-
+app.use(morgan("tiny"));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -54,7 +55,7 @@ require("./app/routes/auth.routes")(app);
 require("./app/routes/user.routes")(app);
 require("./app/cronjob/token.generation")(app);
 
-const PORT = process.env.PORT || 4015;
+const PORT = process.env.PORT || 4016;
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);

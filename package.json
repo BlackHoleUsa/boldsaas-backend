@@ -1,7 +1,7 @@
 {
-  "name": "node-js-jwt-auth-mongodb",
+  "name": "node-js",
   "version": "1.0.0",
-  "description": "Node.js + MongoDB: JWT Authentication & Authorization",
+  "description": "Node.js ",
   "main": "server.js",
   "scripts": {
     "start": "NODE_ENV=development nodemon server.js ",
@@ -33,6 +33,7 @@
     "jsonwebtoken": "^8.5.1",
     "jwt-redis": "^6.0.0",
     "mongoose": "^5.9.1",
+    "morgan": "^1.10.0",
     "node-cron": "^3.0.0",
     "nodemailer": "^6.6.5",
     "nodemon": "^2.0.13",
