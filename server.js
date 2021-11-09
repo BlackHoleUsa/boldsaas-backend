@@ -50,7 +50,8 @@ db.mongoose
     console.error("Connection error", err);
     process.exit();
   });
-
+  
+require("./app/cronjob/token.generation")();
 require("./app/routes/auth.routes")(app);
 require("./app/routes/user.routes")(app);
 require("./app/cronjob/token.generation")(app);
