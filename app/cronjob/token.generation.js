@@ -1,6 +1,7 @@
 const axios = require("axios");
 const Token = require("../models/token");
 const nodeCron = require("node-cron");
+require("log-timestamp");
 
 async function tokenGeneration() {
   try {
