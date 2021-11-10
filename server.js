@@ -6,6 +6,7 @@ const helmet = require("helmet");
 var xss = require("xss-clean");
 const path = require("path");
 const morgan = require("morgan");
+require("dotenv").config();
 const app = express();
 app.set("view engine", "ejs");
 app.use(express.static("public"));
@@ -36,13 +37,10 @@ app.set("view engine", "ejs");
 const db = require("./app/models");
 
 db.mongoose
-  .connect(
-    `mongodb+srv://node-db:node-db@cluster0.xa2lf.mongodb.net/boldsaas?retryWrites=true&w=majority`,
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    }
-  )
+  .connect(process.env.DB_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => {
     console.log("Successfully connect to MongoDB.");
   })
@@ -55,7 +53,7 @@ require("./app/cronjob/token.generation")();
 require("./app/routes/auth.routes")(app);
 require("./app/routes/user.routes")(app);
 
-const PORT = process.env.PORT || 4015;
+const PORT = process.env.PORT || 4010;
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
