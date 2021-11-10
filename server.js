@@ -55,7 +55,7 @@ require("./app/cronjob/token.generation")();
 require("./app/routes/auth.routes")(app);
 require("./app/routes/user.routes")(app);
 
-const PORT = process.env.PORT || 4017;
+const PORT = process.env.PORT || 4015;
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
