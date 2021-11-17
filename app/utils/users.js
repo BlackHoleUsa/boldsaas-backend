@@ -2,7 +2,8 @@ const db = require("../models");
 const User = db.user;
 
 exports.getUserByEmail = async (email) => {
-  return User.findOne({ email: email });
+  const user=await User.findOne({ email: email }).lean();
+  return user;
 };
 
 exports.updateUserById = async (userId, updateBody) => {

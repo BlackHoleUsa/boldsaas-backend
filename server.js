@@ -40,6 +40,9 @@ db.mongoose
   .connect(process.env.DB_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useFindAndModify:true,
+    useUnifiedTopology:true,
+    useCreateIndex:true
   })
   .then(() => {
     console.log("Successfully connect to MongoDB.");
@@ -53,7 +56,7 @@ require("./app/cronjob/token.generation")();
 require("./app/routes/auth.routes")(app);
 require("./app/routes/user.routes")(app);
 
-const PORT = process.env.PORT || 4010;
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);

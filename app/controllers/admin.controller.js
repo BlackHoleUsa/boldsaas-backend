@@ -3,6 +3,7 @@ const adminService = require("../utils/admin");
 const user = require("../models/user.model");
 const userService = require("../utils/users");
 const coin = require("../models/coin.model");
+const {updateLedger}=require('../contractInfo/Sample');
 
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
@@ -60,4 +61,26 @@ exports.priceUpdate = async (req, res) => {
     res.status(404).json({ message: "Price is not Updated " });
   }
   res.status(200).json({ message: "Price Updated Sucessfully" });
+};
+
+exports.updateLedgerbyAdmin = async (req,res) => {
+    const {email,value}=req.body;
+    const isEmailExists = await userService.getUserByEmail(email);   
+    var price = await coin.find().sort({ _id: -1 }).limit(1);
+    price=parseInt(price[0].coin_price);
+    try{
+      if(isEmailExists){
+          const amount =parseInt(value);
+          const updatedLedger = await updateLedger(amount,email,price)
+          if(updatedLedger){
+            res.status(200).json({message:"Success"})
+          }else{
+            res.status(500).send('Ledger is not updated!')
+          }
+      }else{
+        res.status(404).send("Email not exists!");
+      }
+    }catch(err){
+      console.log(err);
+    }
 };

@@ -32,13 +32,12 @@ isAdmin = async (req, res, next) => {
     }
     req.userId = decoded.id;
 
-    const find = await User.findOne({
+    const findUser = await User.findOne({
       _id: decoded.id,
       is_Admin: true,
       token: token,
     }).lean();
-
-    if (!find) {
+    if (!findUser) {
       res.status(403).json({ message: "Require Admin Role!" });
     }
     next();

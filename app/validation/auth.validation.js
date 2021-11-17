@@ -32,6 +32,10 @@ const schemas = {
   value: Joi.object().keys({
     value: Joi.number().required(),
   }),
+  updateLedger:Joi.object().keys({
+    email:Joi.string().required(),
+    value:Joi.required()
+  }),
   emails: Joi.object().keys({
     email: Joi.string().required(),
   }),

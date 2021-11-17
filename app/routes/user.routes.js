@@ -53,6 +53,13 @@ module.exports = function (app) {
     adminController.priceUpdate
   );
 
+  app.post(
+    "/api/admin/update-ledger",
+    [authJwt.isAdmin],
+    middlewares(validate.updateLedger),
+    adminController.updateLedgerbyAdmin
+  )
+
   // app.get("/api/coin-price-histroy", userController.coinPriceHistroy);
 
   app.post("/payment", userController.stripePayment);
