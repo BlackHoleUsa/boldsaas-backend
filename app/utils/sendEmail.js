@@ -1,17 +1,18 @@
 const nodemailer = require("nodemailer");
+require("dotenv").config();
 
 exports.sendEmail = async (email, subject, recovery_token) => {
   try {
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      service: "Outlook365",
       auth: {
-        user: "abubakarblackhole5@gmail.com",
-        pass: "st1rc2py",
+        user: process.env.USER_EMAIL,
+        pass: process.env.USER_EMAIL_PASSWORD,
       },
     });
 
     var mailOptions = {
-      from: "abubakarblackhole5@gmail.com",
+      from: process.env.USER_EMAIL,
       to: email,
       subject: subject,
       // text: 'Reset Password ONLY VALID FOR 10 MINS',
