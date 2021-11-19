@@ -5,8 +5,6 @@ require("log-timestamp");
 
 async function tokenGeneration() {
   try {
-    console.log("ID=>",process.env.PayPal_Client_Id);
-    console.log("ID=>",process.env.PayPal_Secret_Id);
     
     const {
       data: { access_token },

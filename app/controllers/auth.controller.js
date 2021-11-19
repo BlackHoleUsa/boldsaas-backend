@@ -4,6 +4,7 @@ const getuser = require("../utils/users");
 const reset = require("../utils/resetpassword");
 const User = require("../models/user.model");
 const crypto = require("crypto");
+const moment = require("moment");
 
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
@@ -73,6 +74,12 @@ exports.signin = async (req, res) => {
 };
 
 exports.forgotPassword = async (req, res) => {
+  const resetToken = crypto.randomBytes(32).toString("hex");
+  const passwordResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
   let dbUser = await getuser.getUserByEmail(req.body.email);
 
   if (!dbUser) {
@@ -81,7 +88,9 @@ exports.forgotPassword = async (req, res) => {
       message: "There is no user found with this email address",
     });
   }
-  const resetToken = dbUser.createPasswordResetToken();
+  dbUser.passwordResetToken = passwordResetToken;
+  console.log(passwordResetToken);
+
   const resetURL = `${resetToken}`;
 
   try {
@@ -90,7 +99,9 @@ exports.forgotPassword = async (req, res) => {
       "Reset Password ONLY VALID FOR 10 MINS",
       resetURL
     );
-
+    const time = parseInt(moment().unix());
+    console.log("time => ", time);
+    dbUser.passwordResetExpires = time;
     await dbUser.save({ validateBeforeSave: false });
 
     res.status(200).json({
@@ -103,34 +114,50 @@ exports.forgotPassword = async (req, res) => {
 };
 
 exports.resetPassword = async (req, res) => {
-  //const { token } = req.params;
+  const { token } = req.params;
 
-  const hashedToken = crypto
-    .createHash("sha256")
-    .update(req.params.token)
-    .digest("hex");
+  // const hashedToken = crypto
+  //   .createHash("sha256")
+  //   .update(req.params.token)
+  //   .digest("hex");
 
-  // console.log(hashedToken);
-
+  //console.log(hashedToken);
+  //const hashedToken = req.params.token;
   const user = await User.findOne({
-    passwordResetToken: hashedToken,
-  });
+    passwordResetToken: token,
+  }).then((product) => {
+    return product;
+  }).catch(err=>{
+    
+      return res.status(404).json({
+        status: 404,
+        message: "User not Found",
+      });
+    })
 
-  if (!user) {
+  const generateTime = user.passwordResetExpires;
+  console.log("=>", generateTime);
+ 
+  const currentTime = parseInt(moment().unix());
+
+  const diff = currentTime - generateTime;
+  if (diff > 100) {
+    user.password = bcrypt.hashSync(req.body.password, 8);
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+
+    await user.save();
+    res.status(200).json({
+      message: "Password changed successfully!",
+    });
+  }
+  else{
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save();
     return res.status(404).json({
       status: 404,
       message: "Time Expire",
     });
   }
-
-  user.password = bcrypt.hashSync(req.body.password, 8);
-  user.passwordResetToken = undefined;
-  user.passwordResetExpires = undefined;
-
-  await user.save();
-  // console.log("user=>", user);
-
-  res.status(200).json({
-    message: "Password changed successfully!",
-  });
 };
