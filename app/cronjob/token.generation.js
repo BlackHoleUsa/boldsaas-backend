@@ -5,11 +5,13 @@ require("log-timestamp");
 
 async function tokenGeneration() {
   try {
+    console.log("ID=>",process.env.PayPal_Client_Id);
+    console.log("ID=>",process.env.PayPal_Secret_Id);
     
     const {
       data: { access_token },
     } = await axios({
-      url: "https://api-m.paypal.com/v1/oauth2/token",
+      url: "https://api.sandbox.paypal.com/v1/oauth2/token",
       method: "post",
       headers: {
         Accept: "application/json",
