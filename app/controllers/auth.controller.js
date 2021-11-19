@@ -129,43 +129,40 @@ exports.resetPassword = async (req, res) => {
   .exec()
   .then((product) => {
     
-    console.log("=>", product);
-    // return product;
     const generateTime = product.passwordResetExpires;
-  console.log("=>", generateTime);
- 
-  const currentTime = parseInt(moment().unix());
-  const diff = currentTime - generateTime;
-  if (diff < 100) {
-    product.password = bcrypt.hashSync(req.body.password, 8);
-    product.passwordResetToken = undefined;
-    product.passwordResetExpires = undefined;
-
-     product.save((err,result)=>{
-      if(err){
-        res.status(500).send('System error and user not saved due to some issue')
-        return
-      }
-      res.status(200).json({
-        message: "Password changed successfully!",
-        result
+    const currentTime = parseInt(moment().unix());
+    const diff = currentTime - generateTime;
+    if (diff < 600) {
+      product.password = bcrypt.hashSync(req.body.password, 8);
+      product.passwordResetToken = undefined;
+      product.passwordResetExpires = undefined;
+      product
+      .save((err,result)=>{
+        if(err){
+          res.status(500).send('System error and user not saved due to some issue')
+          return
+        }
+        res.status(200).json({
+          message: "Password changed successfully!",
+          result
+        });
       });
-    });
-  }
-  else{
-    product.passwordResetToken = undefined;
-    product.passwordResetExpires = undefined;
-    product.save();
-    return res.status(404).json({
-      status: 404,
-      message: "Time Expire",
-    });
-  }
-  }).catch(err=>{
+    }
+    else{
+      product.passwordResetToken = undefined;
+      product.passwordResetExpires = undefined;
+      product.save();
       return res.status(404).json({
         status: 404,
-        message: "User not Found",
-        err
+        message: "Time Expire",
       });
+    }
     })
+      .catch(err=>{
+        return res.status(404).json({
+          status: 404,
+          message: "User not Found",
+          err
+        });
+      })
 };
