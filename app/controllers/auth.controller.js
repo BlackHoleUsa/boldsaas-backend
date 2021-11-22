@@ -89,7 +89,6 @@ exports.forgotPassword = async (req, res) => {
     });
   }
   dbUser.passwordResetToken = passwordResetToken;
-  console.log(passwordResetToken);
 
   const resetURL = `${resetToken}`;
 
@@ -100,7 +99,6 @@ exports.forgotPassword = async (req, res) => {
       resetURL
     );
     const time = parseInt(moment().unix());
-    console.log("time => ", time);
     dbUser.passwordResetExpires = time;
     await dbUser.save({ validateBeforeSave: false });
 
@@ -114,50 +112,52 @@ exports.forgotPassword = async (req, res) => {
 };
 
 exports.resetPassword = async (req, res) => {
-  const { token } = req.params;
 
-  // const hashedToken = crypto
-  //   .createHash("sha256")
-  //   .update(req.params.token)
-  //   .digest("hex");
+  const hashedToken = crypto
+    .createHash("sha256")
+    .update(req.params.token)
+    .digest("hex");
 
-  //console.log(hashedToken);
-  //const hashedToken = req.params.token;
-  const user = await User.findOne({
-    passwordResetToken: token,
-  }).then((product) => {
-    return product;
-  }).catch(err=>{
+   await User.findOne({
+    passwordResetToken: hashedToken 
+  })
+  .exec()
+  .then((product) => {
     
+    const generateTime = product.passwordResetExpires;
+    const currentTime = parseInt(moment().unix());
+    const diff = currentTime - generateTime;
+    if (diff < 600) {
+      product.password = bcrypt.hashSync(req.body.password, 8);
+      product.passwordResetToken = undefined;
+      product.passwordResetExpires = undefined;
+      product
+      .save((err,result)=>{
+        if(err){
+          res.status(500).send('System error and user not saved due to some issue')
+          return
+        }
+        res.status(200).json({
+          message: "Password changed successfully!",
+          result
+        });
+      });
+    }
+    else{
+      product.passwordResetToken = undefined;
+      product.passwordResetExpires = undefined;
+      product.save();
       return res.status(404).json({
         status: 404,
-        message: "User not Found",
+        message: "Time Expire",
       });
+    }
     })
-
-  const generateTime = user.passwordResetExpires;
-  console.log("=>", generateTime);
- 
-  const currentTime = parseInt(moment().unix());
-
-  const diff = currentTime - generateTime;
-  if (diff > 100) {
-    user.password = bcrypt.hashSync(req.body.password, 8);
-    user.passwordResetToken = undefined;
-    user.passwordResetExpires = undefined;
-
-    await user.save();
-    res.status(200).json({
-      message: "Password changed successfully!",
-    });
-  }
-  else{
-    user.passwordResetToken = undefined;
-    user.passwordResetExpires = undefined;
-    await user.save();
-    return res.status(404).json({
-      status: 404,
-      message: "Time Expire",
-    });
-  }
+      .catch(err=>{
+        return res.status(404).json({
+          status: 404,
+          message: "User not Found",
+          err
+        });
+      })
 };
