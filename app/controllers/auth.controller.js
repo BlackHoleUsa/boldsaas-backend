@@ -89,7 +89,6 @@ exports.forgotPassword = async (req, res) => {
     });
   }
   dbUser.passwordResetToken = passwordResetToken;
-  console.log(passwordResetToken);
 
   const resetURL = `${resetToken}`;
 
@@ -100,7 +99,6 @@ exports.forgotPassword = async (req, res) => {
       resetURL
     );
     const time = parseInt(moment().unix());
-    console.log("time => ", time);
     dbUser.passwordResetExpires = time;
     await dbUser.save({ validateBeforeSave: false });
 
@@ -114,17 +112,14 @@ exports.forgotPassword = async (req, res) => {
 };
 
 exports.resetPassword = async (req, res) => {
-  const { token } = req.params;
 
-  // const hashedToken = crypto
-  //   .createHash("sha256")
-  //   .update(req.params.token)
-  //   .digest("hex");
+  const hashedToken = crypto
+    .createHash("sha256")
+    .update(req.params.token)
+    .digest("hex");
 
-  //console.log(hashedToken);
-  //const hashedToken = req.params.token;
    await User.findOne({
-    passwordResetToken: token,
+    passwordResetToken: hashedToken 
   })
   .exec()
   .then((product) => {
