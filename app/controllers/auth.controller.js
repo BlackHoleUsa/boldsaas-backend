@@ -22,7 +22,7 @@ exports.signup = async (req, res) => {
       res.status(500).json({ message: err });
       return;
     }
-    return res.status(200).json({ message: "User added Successfully." });
+    return res.status(201).send({ message: "User added Successfully." });
   });
 };
 

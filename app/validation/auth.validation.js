@@ -26,8 +26,10 @@ const is_toc = {
 
 const schemas = {
   email: Joi.object().keys({
-    email: Joi.string().required(),
-    password: Joi.required(),
+    username:Joi.string(),
+    email: Joi.string().email().required(),
+    password: Joi.string().min(8).required(),
+    is_Admin:Joi.boolean().optional()
   }),
   value: Joi.object().keys({
     value: Joi.number().required(),
