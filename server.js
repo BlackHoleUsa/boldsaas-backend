@@ -11,20 +11,8 @@ const app = express();
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 
-app.use(
-  cors({
-    origin: [
-      "http://blackhole@sardartufani.com",
-      "http://localhost:3000",
-      "http://sardartufani.com",
-      "http://blackhole@sardartufani.com/projects/bolt-saas",
-    ],
-    methods: ["POST", "PUT", "GET", "DELETE", "OPTIONS", "HEAD", "PATCH"],
-    credentials: true,
-  })
-);
+app.use(cors());
 
-app.options("*", cors());
 app.use(helmet());
 app.use(xss());
 app.use(morgan("tiny"));
@@ -40,9 +28,9 @@ db.mongoose
   .connect(process.env.DB_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useFindAndModify:true,
-    useUnifiedTopology:true,
-    useCreateIndex:true
+    useFindAndModify: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
   })
   .then(() => {
     console.log("Successfully connect to MongoDB.");
