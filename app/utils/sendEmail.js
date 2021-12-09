@@ -10,7 +10,6 @@ exports.sendEmail = async (email, subject, recovery_token) => {
         pass: process.env.USER_EMAIL_PASSWORD,
       },
     });
-    console.log(process.env.EMAIL_URL);
 
     var mailOptions = {
       from: process.env.USER_EMAIL,
