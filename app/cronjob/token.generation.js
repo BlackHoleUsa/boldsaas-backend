@@ -5,11 +5,11 @@ require("log-timestamp");
 
 async function tokenGeneration() {
   try {
-    
     const {
       data: { access_token },
     } = await axios({
-      url: "https://api.sandbox.paypal.com/v1/oauth2/token",
+      url: "https://api-m.paypal.com/v1/oauth2/token", // for live
+      // url: "https://api.sandbox.paypal.com/v1/oauth2/token",   for testing
       method: "post",
       headers: {
         Accept: "application/json",
@@ -31,7 +31,7 @@ async function tokenGeneration() {
         { _id: findDoc._id },
         { token: access_token }
       );
-      console.log("Update Token");
+      console.log("Update Token ");
     } else {
       const findDoc = await Token.create({ token: access_token });
     }

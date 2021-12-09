@@ -124,10 +124,16 @@ exports.payPalPaymentSuccees = async (req, res) => {
     },
   };
   try {
+    //for live
     const resposne = await axios(
-      `https://api-m.sandbox.paypal.com/v1/checkout/orders/${req.params.id}`,
+      `https://api-m.paypal.com/v1/checkout/orders/${req.params.id}`,
       configs
     );
+    //for testing
+    // const resposne = await axios(
+    //   `https://api-m.sandbox.paypal.com/v1/checkout/orders/${req.params.id}`,
+    //   configs
+    // );
     if (resposne.data.status === "COMPLETED") {
       const amount = parseInt(resposne.data.gross_total_amount.value);
       const totalShare = amount / latestPrice;
