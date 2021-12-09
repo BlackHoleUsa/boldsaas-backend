@@ -10,16 +10,14 @@ exports.sendEmail = async (email, subject, recovery_token) => {
         pass: process.env.USER_EMAIL_PASSWORD,
       },
     });
+    console.log(process.env.EMAIL_URL);
 
     var mailOptions = {
       from: process.env.USER_EMAIL,
       to: email,
       subject: subject,
       // text: 'Reset Password ONLY VALID FOR 10 MINS',
-      html:
-        '<p>Click <a href="http://sardartufani.com/projects/bolt-saas/#/forgotpassword?token=' +
-        recovery_token +
-        '">here</a> to reset your password</p>',
+      html: `<p>Click <a href=${process.env.EMAIL_URL}/forgotpassword?token=${recovery_token}>here</a> to reset your password</p>`,
     };
 
     http: transporter.sendMail(mailOptions, function (err, info) {
