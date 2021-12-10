@@ -13,6 +13,7 @@ const stripe = require("stripe")(process.env.Private_Api_Key);
 const paypal = require("@paypal/checkout-server-sdk");
 const { updateLedger } = require("../contractInfo/Sample");
 
+//for test
 // const Environment =
 //   process.env.NODE_ENV === "production"
 //     ? paypal.core.LiveEnvironment
