@@ -13,15 +13,18 @@ const stripe = require("stripe")(process.env.Private_Api_Key);
 const paypal = require("@paypal/checkout-server-sdk");
 const { updateLedger } = require("../contractInfo/Sample");
 
-const Environment =
-  process.env.NODE_ENV === "production"
-    ? paypal.core.LiveEnvironment
-    : paypal.core.SandboxEnvironment;
+// const Environment =
+//   process.env.NODE_ENV === "production"
+//     ? paypal.core.LiveEnvironment
+//     : paypal.core.SandboxEnvironment;
+// const client = new paypal.core.PayPalHttpClient(
+//   new Environment(process.env.PayPal_Client_Id, process.env.PayPal_Secret_Id)
+// );
+
+const Environment = paypal.core.LiveEnvironment;
 const client = new paypal.core.PayPalHttpClient(
   new Environment(process.env.PayPal_Client_Id, process.env.PayPal_Secret_Id)
 );
-
-// const Environment = new paypal.core.PayPalHttpClient( new Environment(process.env.PayPal_Client_Id, process.env.PayPal_Secret_Id)
 
 exports.coinPriceHistroy = async (req, res) => {
   const value = await coin.find({}).lean();
