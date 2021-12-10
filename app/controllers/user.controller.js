@@ -15,7 +15,7 @@ const { updateLedger } = require("../contractInfo/Sample");
 
 const Environment =
   process.env.NODE_ENV === "production"
-    ? paypal.core.ProductionEnvironment
+    ? paypal.core.LiveEnvironment
     : paypal.core.SandboxEnvironment;
 const client = new paypal.core.PayPalHttpClient(
   new Environment(process.env.PayPal_Client_Id, process.env.PayPal_Secret_Id)
