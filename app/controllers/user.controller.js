@@ -15,11 +15,13 @@ const { updateLedger } = require("../contractInfo/Sample");
 
 const Environment =
   process.env.NODE_ENV === "production"
-    ? paypal.core.LiveEnvironment
+    ? paypal.core.ProductionEnvironment
     : paypal.core.SandboxEnvironment;
 const client = new paypal.core.PayPalHttpClient(
   new Environment(process.env.PayPal_Client_Id, process.env.PayPal_Secret_Id)
 );
+
+// const Environment = new paypal.core.PayPalHttpClient( new Environment(process.env.PayPal_Client_Id, process.env.PayPal_Secret_Id)
 
 exports.coinPriceHistroy = async (req, res) => {
   const value = await coin.find({}).lean();
@@ -57,9 +59,10 @@ exports.stripePaymentSuccessBlockChain = async (req, res) => {
   const user = await User.findOne({ _id: userId }).lean();
   const price = await coin.find().sort({ _id: -1 }).limit(1);
   const coinPrice = price[0].coin_price;
-
+  console.log("done");
   try {
     const intent = await stripe.paymentIntents.retrieve(req.body.id);
+    console.log("INtent =>", intent);
     if (intent.status === "succeeded") {
       const total = parseInt(intent.amount);
       const amount = total / 100;
@@ -68,6 +71,8 @@ exports.stripePaymentSuccessBlockChain = async (req, res) => {
       if (blockchain) {
         res.status(200).json({ messege: "Success" });
       }
+    } else {
+      res.status(500).json({ error: "Payment gateway error" }).end();
     }
   } catch (e) {
     res.status(500).json({ error: e.message });
