@@ -48,7 +48,7 @@ exports.stripePayment = async (req, res) => {
 
 exports.stripePaymentSuccessBlockChain = async (req, res) => {
   let token = req.headers["x-access-token"];
-  console.log("tokem =>", token);
+  // console.log("tokem =>", token);
   let userId;
 
   if (!token) {
@@ -62,13 +62,13 @@ exports.stripePaymentSuccessBlockChain = async (req, res) => {
     userId = decoded.id;
   });
   const user = await User.findOne({ _id: userId }).lean();
-  console.log("User =>", user);
+  // console.log("User =>", user);
   const price = await coin.find().sort({ _id: -1 }).limit(1);
   const coinPrice = price[0].coin_price;
   console.log("done");
   try {
     const intent = await stripe.paymentIntents.retrieve(req.body.id);
-    console.log("INtent =>", intent);
+    // console.log("INtent =>", intent);
     if (intent.status === "succeeded") {
       const total = parseInt(intent.amount);
       const amount = total / 100;
