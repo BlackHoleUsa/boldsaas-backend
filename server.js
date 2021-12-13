@@ -12,6 +12,8 @@ app.set("view engine", "ejs");
 app.use(express.static("public"));
 
 app.use(cors());
+app.options("*", cors());
+
 app.use(helmet());
 app.use(xss());
 app.use(morgan("tiny"));
