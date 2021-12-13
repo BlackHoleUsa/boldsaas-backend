@@ -125,6 +125,8 @@ exports.payPalPaymentSuccees = async (req, res) => {
   });
 
   const user = await User.findOne({ _id: userId }).lean();
+  console.log("user => ", user);
+  console.log("user => ", user.email);
 
   const price = await coin.find().sort({ _id: -1 }).limit(1);
   const latestPrice = parseInt(price[0].coin_price);
