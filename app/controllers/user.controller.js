@@ -103,6 +103,8 @@ exports.payPal = async (req, res) => {
     const order = await client.execute(request);
     res.status(200).json({ id: order.result });
   } catch (e) {
+    console.log("process.env.clientId=>", process.env.PayPal_Client_Id);
+    console.log("process.env.clientId=>", process.env.PayPal_Secret_Id);
     res.status(500).json({ error: e.message });
   }
 };
@@ -165,6 +167,10 @@ exports.payPalPaymentSuccees = async (req, res) => {
 };
 
 exports.latestCoinPrice = async (req, res) => {
+  console.log("process.env.clientId=>", process.env.PayPal_Client_Id);
+  console.log("process.env.clientId=>", process.env.PayPal_Secret_Id);
+  console.log("process.env.clientId=>", process.env.Public_Api_Key);
+  console.log("process.env.clientId=>", process.env.Private_Api_Key);
   const price = await coin.find().sort({ _id: -1 }).limit(1);
 
   if (!price) {
