@@ -16,9 +16,6 @@ exports.signup = async (req, res) => {
     password: bcrypt.hashSync(req.body.password, 8),
     is_Admin: req.body.is_Admin,
   });
-  // var token = jwt.sign({ id: user.id }, config.secret, {
-  //     expiresIn: 86400, // 24 hours
-  //   });
 
   const token = jwt.sign({ user_id: user._id }, config.secret, {
     expiresIn: "86400", //24h
@@ -32,19 +29,14 @@ exports.signup = async (req, res) => {
       res.status(500).json({ message: err });
       return;
     }
-    console.log("user =>", user);
-    return res.status(200).json({ message: "User added Successfully.", user });
+    return res.status(200).json({
+      id: user._id,
+      username: user.username,
+      email: user.email,
+      is_Admin: user.is_Admin,
+      accessToken: token,
+    });
   });
-  // console.log("save => ", save);
-  // res.send(save);
-
-  // var token = jwt.sign({ id: user.id }, config.secret, {
-  //     expiresIn: 86400, // 24 hours
-  //   });
-
-  // const find = await User.updateOne(
-  //   { email: req.body.email },
-  //   { $set: { token: token } }
 };
 
 exports.signin = async (req, res) => {
