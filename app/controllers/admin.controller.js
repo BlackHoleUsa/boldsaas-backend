@@ -3,7 +3,7 @@ const adminService = require("../utils/admin");
 const user = require("../models/user.model");
 const userService = require("../utils/users");
 const coin = require("../models/coin.model");
-const {updateLedger}=require('../contractInfo/Sample');
+const { updateLedger } = require("../contractInfo/Sample");
 
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
@@ -22,8 +22,9 @@ exports.blockUser = async (req, res) => {
 
   if (block.nModified === 1) {
     res.status(200).send({ message: "User Blocked Sucessfully" });
+  } else {
+    res.status(404).send({ message: "User not Blocked " });
   }
-  res.status(404).send({ message: "User not Blocked " });
 };
 
 exports.resetPassword = async (req, res) => {
@@ -63,24 +64,24 @@ exports.priceUpdate = async (req, res) => {
   res.status(200).json({ message: "Price Updated Sucessfully" });
 };
 
-exports.updateLedgerbyAdmin = async (req,res) => {
-    const {email,value}=req.body;
-    const isEmailExists = await userService.getUserByEmail(email);   
-    var price = await coin.find().sort({ _id: -1 }).limit(1);
-    price=parseInt(price[0].coin_price);
-    try{
-      if(isEmailExists){
-          const amount =parseInt(value);
-          const updatedLedger = await updateLedger(amount,email,price)
-          if(updatedLedger){
-            res.status(200).json({message:"Success"})
-          }else{
-            res.status(500).send('Ledger is not updated!')
-          }
-      }else{
-        res.status(404).send("Email not exists!");
+exports.updateLedgerbyAdmin = async (req, res) => {
+  const { email, value } = req.body;
+  const isEmailExists = await userService.getUserByEmail(email);
+  var price = await coin.find().sort({ _id: -1 }).limit(1);
+  price = parseInt(price[0].coin_price);
+  try {
+    if (isEmailExists) {
+      const amount = parseInt(value);
+      const updatedLedger = await updateLedger(amount, email, price);
+      if (updatedLedger) {
+        res.status(200).json({ message: "Success" });
+      } else {
+        res.status(500).send("Ledger is not updated!");
       }
-    }catch(err){
-      console.log(err);
+    } else {
+      res.status(404).send("Email not exists!");
     }
+  } catch (err) {
+    console.log(err);
+  }
 };
