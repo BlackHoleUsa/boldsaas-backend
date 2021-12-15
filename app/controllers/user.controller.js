@@ -62,7 +62,7 @@ exports.stripePaymentSuccessBlockChain = async (req, res) => {
     userId = decoded.id;
   });
   const user = await User.findOne({ _id: userId }).lean();
-  // console.log("User =>", user);
+  console.log("User =>", user);
   const price = await coin.find().sort({ _id: -1 }).limit(1);
   const coinPrice = price[0].coin_price;
   console.log("done");
