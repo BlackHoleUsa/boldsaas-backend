@@ -48,7 +48,7 @@ module.exports = function (app) {
 
   app.post(
     "/api/admin/coin-price-update",
-    [authJwt.isAdmin, authJwt.verifyToken],
+    // [authJwt.isAdmin, authJwt.verifyToken],
     middlewares(validate.value),
     adminController.priceUpdate
   );
@@ -58,9 +58,9 @@ module.exports = function (app) {
     [authJwt.isAdmin],
     middlewares(validate.updateLedger),
     adminController.updateLedgerbyAdmin
-  )
+  );
 
-  // app.get("/api/coin-price-histroy", userController.coinPriceHistroy);
+  app.get("/api/coin-price-histroy", userController.coinPriceHistroy);
 
   app.post("/payment", userController.stripePayment);
 

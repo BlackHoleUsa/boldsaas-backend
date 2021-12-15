@@ -31,7 +31,7 @@ exports.coinPriceHistroy = async (req, res) => {
   const value = await coin.find({}).lean();
 
   if (!value) {
-    res.status(404).json({ message: "Price is not Updated " });
+    res.status(404).json({ message: "Price is get " });
   }
   res.status(200).json({ messege: value });
 };
@@ -73,7 +73,11 @@ exports.stripePaymentSuccessBlockChain = async (req, res) => {
       const total = parseInt(intent.amount);
       const amount = total / 100;
       const final = amount / coinPrice;
-      const blockchain = await updateLedger(final, user.email, coinPrice);
+      const blockchain = await updateLedger(
+        final,
+        user.email,
+        coinPrice * 1000
+      );
       if (blockchain) {
         res.status(200).json({ messege: "Success" });
       }
@@ -140,15 +144,15 @@ exports.payPalPaymentSuccees = async (req, res) => {
   };
   try {
     //for live
-    const resposne = await axios(
-      `https://api-m.paypal.com/v1/checkout/orders/${req.params.id}`,
-      configs
-    );
-    //for testing
     // const resposne = await axios(
-    //   `https://api-m.sandbox.paypal.com/v1/checkout/orders/${req.params.id}`,
+    //   `https://api-m.paypal.com/v1/checkout/orders/${req.params.id}`,
     //   configs
     // );
+    //for testing
+    const resposne = await axios(
+      `https://api-m.sandbox.paypal.com/v1/checkout/orders/${req.params.id}`,
+      configs
+    );
     if (resposne.data.status === "COMPLETED") {
       const amount = parseInt(resposne.data.gross_total_amount.value);
       const totalShare = amount / latestPrice;
@@ -156,7 +160,7 @@ exports.payPalPaymentSuccees = async (req, res) => {
       const blockChain = await updateLedger(
         totalShare,
         user.email,
-        latestPrice
+        latestPrice * 1000
       );
       if (blockChain) {
         res.status(200).json({ messege: "Success" });
@@ -169,10 +173,6 @@ exports.payPalPaymentSuccees = async (req, res) => {
 };
 
 exports.latestCoinPrice = async (req, res) => {
-  console.log("process.env.clientId=>", process.env.PayPal_Client_Id);
-  console.log("process.env.clientId=>", process.env.PayPal_Secret_Id);
-  console.log("process.env.clientId=>", process.env.Public_Api_Key);
-  console.log("process.env.clientId=>", process.env.Private_Api_Key);
   const price = await coin.find().sort({ _id: -1 }).limit(1);
 
   if (!price) {
