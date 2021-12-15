@@ -9,7 +9,7 @@ async function tokenGeneration() {
       data: { access_token },
     } = await axios({
       // url: "https://api-m.paypal.com/v1/oauth2/token", // for live
-      url: "https://api.sandbox.paypal.com/v1/oauth2/token",   for testing
+      url: "https://api.sandbox.paypal.com/v1/oauth2/token", // for testing
       method: "post",
       headers: {
         Accept: "application/json",
