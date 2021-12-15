@@ -48,7 +48,7 @@ module.exports = function (app) {
 
   app.post(
     "/api/admin/coin-price-update",
-    // [authJwt.isAdmin, authJwt.verifyToken],
+    [authJwt.isAdmin, authJwt.verifyToken],
     middlewares(validate.value),
     adminController.priceUpdate
   );
