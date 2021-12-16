@@ -73,8 +73,9 @@ exports.stripePaymentSuccessBlockChain = async (req, res) => {
       const total = parseInt(intent.amount);
       const amount = total / 100;
       const final = amount / coinPrice;
+      const share = final - 1.25; //  deduct the price
       const blockchain = await updateLedger(
-        final,
+        share,
         user.email,
         coinPrice * 1000
       );
@@ -107,8 +108,6 @@ exports.payPal = async (req, res) => {
     const order = await client.execute(request);
     res.status(200).json({ id: order.result });
   } catch (e) {
-    console.log("process.env.clientId=>", process.env.PayPal_Client_Id);
-    console.log("process.env.clientId=>", process.env.PayPal_Secret_Id);
     res.status(500).json({ error: e.message });
   }
 };
@@ -129,8 +128,8 @@ exports.payPalPaymentSuccees = async (req, res) => {
   });
 
   const user = await User.findOne({ _id: userId }).lean();
-  console.log("user => ", user);
-  console.log("user => ", user.email);
+  // console.log("user => ", user);
+  // console.log("user => ", user.email);
 
   const price = await coin.find().sort({ _id: -1 }).limit(1);
   const latestPrice = parseInt(price[0].coin_price);
@@ -156,9 +155,10 @@ exports.payPalPaymentSuccees = async (req, res) => {
     if (resposne.data.status === "COMPLETED") {
       const amount = parseInt(resposne.data.gross_total_amount.value);
       const totalShare = amount / latestPrice;
+      const total = totalShare - 1.25; // deduct the fees
 
       const blockChain = await updateLedger(
-        totalShare,
+        total,
         user.email,
         latestPrice * 1000
       );
