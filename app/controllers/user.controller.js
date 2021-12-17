@@ -75,6 +75,8 @@ exports.stripePaymentSuccessBlockChain = async (req, res) => {
       const amount2 = amount - 1.25;
       const final = amount2 / coinPrice;
       // const share = final - 1.25; //  deduct the price
+      console.log("final =>", final);
+
       const blockchain = await updateLedger(
         final,
         user.email,
