@@ -14,19 +14,19 @@ const paypal = require("@paypal/checkout-server-sdk");
 const { updateLedger } = require("../contractInfo/Sample");
 
 //for test
-const Environment =
-  process.env.NODE_ENV === "development"
-    ? paypal.core.LiveEnvironment
-    : paypal.core.SandboxEnvironment;
-const client = new paypal.core.PayPalHttpClient(
-  new Environment(process.env.PayPal_Client_Id, process.env.PayPal_Secret_Id)
-);
-
-//for live
-// const Environment = paypal.core.LiveEnvironment;
+// const Environment =
+//   process.env.NODE_ENV === "development"
+//     ? paypal.core.LiveEnvironment
+//     : paypal.core.SandboxEnvironment;
 // const client = new paypal.core.PayPalHttpClient(
 //   new Environment(process.env.PayPal_Client_Id, process.env.PayPal_Secret_Id)
 // );
+
+//for live
+const Environment = paypal.core.LiveEnvironment;
+const client = new paypal.core.PayPalHttpClient(
+  new Environment(process.env.PayPal_Client_Id, process.env.PayPal_Secret_Id)
+);
 
 exports.coinPriceHistroy = async (req, res) => {
   const value = await coin.find({}).lean();
@@ -153,15 +153,15 @@ exports.payPalPaymentSuccees = async (req, res) => {
   };
   try {
     // for live
-    // const resposne = await axios(
-    //   `https://api-m.paypal.com/v1/checkout/orders/${req.params.id}`,
-    //   configs
-    // );
-    //for testing
     const resposne = await axios(
-      `https://api-m.sandbox.paypal.com/v1/checkout/orders/${req.params.id}`,
+      `https://api-m.paypal.com/v1/checkout/orders/${req.params.id}`,
       configs
     );
+    //for testing
+    // const resposne = await axios(
+    //   `https://api-m.sandbox.paypal.com/v1/checkout/orders/${req.params.id}`,
+    //   configs
+    // );
     if (resposne.data.status === "COMPLETED") {
       const amount2 = parseInt(resposne.data.gross_total_amount.value);
       const amount = amount2 - 1.25;
