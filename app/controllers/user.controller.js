@@ -71,8 +71,14 @@ exports.stripePaymentSuccessBlockChain = async (req, res) => {
     // console.log("INtent =>", intent);
     if (intent.status === "succeeded") {
       const total = parseInt(intent.amount);
+      console.log("totoal =>", total);
+
       const amount = total / 100;
+      console.log("amount =>", amount);
+
       const amount2 = amount - 1.25;
+      console.log("amount2 =>", amount2);
+
       const final = amount2 / coinPrice;
       // const share = final - 1.25; //  deduct the price
       console.log("final =>", final);
