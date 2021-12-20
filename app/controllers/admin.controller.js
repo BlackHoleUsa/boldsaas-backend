@@ -72,7 +72,7 @@ exports.updateLedgerbyAdmin = async (req, res) => {
   try {
     if (isEmailExists) {
       const amount = parseInt(value);
-      const updatedLedger = await updateLedger(amount, email, price);
+      const updatedLedger = await updateLedger(amount * 1000, email, price);
       if (updatedLedger) {
         res.status(200).json({ message: "Success" });
       } else {
