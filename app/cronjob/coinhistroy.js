@@ -8,6 +8,7 @@ async function coinhistroy() {
     await coin.create({
       coin_price: price[0].coin_price,
     });
+    console.log("update");
   } catch (e) {
     console.error(e);
   }
