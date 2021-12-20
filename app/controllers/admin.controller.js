@@ -68,7 +68,7 @@ exports.updateLedgerbyAdmin = async (req, res) => {
   const { email, value } = req.body;
   const isEmailExists = await userService.getUserByEmail(email);
   var price = await coin.find().sort({ _id: -1 }).limit(1);
-  price = parseInt(price[0].coin_price);
+  price = price[0].coin_price;
   try {
     if (isEmailExists) {
       const amount = parseInt(value);
