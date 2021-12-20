@@ -29,12 +29,12 @@ const client = new paypal.core.PayPalHttpClient(
 );
 
 exports.coinPriceHistroy = async (req, res) => {
-  const value = await coin.find({}).lean();
+  const price = await coin.find().sort({ _id: -1 }).limit(7);
 
-  if (!value) {
+  if (!price) {
     res.status(404).json({ message: "Price is get " });
   }
-  res.status(200).json({ messege: value });
+  res.status(200).json({ messege: price });
 };
 
 exports.stripePayment = async (req, res) => {
